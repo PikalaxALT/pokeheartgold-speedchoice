@@ -1,6 +1,6 @@
 ## Common defines for ARM9 and ARM7 Makefiles ##
 
-COMPARE ?= 1
+COMPARE ?= 0  # this is a hack of pokemon heartgold/soulsilver
 
 default: all
 
