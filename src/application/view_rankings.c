@@ -14,9 +14,11 @@
 #include "math_util.h"
 #include "msgdata.h"
 #include "obj_char_transfer.h"
+#include "obj_pltt_transfer.h"
 #include "player_data.h"
 #include "render_window.h"
 #include "save_rankings.h"
+#include "sprite.h"
 #include "system.h"
 #include "text.h"
 #include "unk_02005D10.h"
@@ -25,8 +27,6 @@
 #include "unk_0200ACF0.h"
 #include "unk_0200B150.h"
 #include "unk_0200FA24.h"
-#include "unk_02022588.h"
-#include "unk_02023694.h"
 #include "unk_02097D3C.h"
 #include "vram_transfer_manager.h"
 #include "yes_no_prompt.h"
@@ -150,27 +150,41 @@ typedef struct ViewRankingsCursorPositionParam {
 } ViewRankingsCursorPositionParam;
 
 static const ViewRankingsCursorPositionParam sCursorPositionParams[] = {
-    { .x      = 128,
+    {
+     .x    = 128,
      .y    = 64,
-     .anim = 7 },
-    { .x      = 128,
+     .anim = 7,
+     },
+    {
+     .x    = 128,
      .y    = 80,
-     .anim = 7 },
-    { .x      = 128,
+     .anim = 7,
+     },
+    {
+     .x    = 128,
      .y    = 96,
-     .anim = 7 },
-    { .x      = 128,
+     .anim = 7,
+     },
+    {
+     .x    = 128,
      .y    = 112,
-     .anim = 7 },
-    { .x      = 128,
+     .anim = 7,
+     },
+    {
+     .x    = 128,
      .y    = 128,
-     .anim = 7 },
-    { .x      = 128,
+     .anim = 7,
+     },
+    {
+     .x    = 128,
      .y    = 144,
-     .anim = 7 },
-    { .x      = 224,
+     .anim = 7,
+     },
+    {
+     .x    = 224,
      .y    = 176,
-     .anim = 2 },
+     .anim = 2,
+     },
 };
 
 static const RecordPageParam sRecordPageParam_BattleTower[] = {
@@ -290,7 +304,7 @@ BOOL ViewRankingsApp_Main(OVY_MANAGER *man, int *pState) {
     ViewRankingsAppData *appData = OverlayManager_GetData(man);
     switch (appData->mainState) {
     case VIEW_RANKINGS_APP_MAIN_STATE_FADE_IN:
-        BeginNormalPaletteFade(0, 1, 1, RGB_BLACK, 6, 1, HEAP_ID_9E);
+        BeginNormalPaletteFade(0, 1, 1, RGB_BLACK, 6, 1, HEAP_ID_RANKINGS_APP);
         appData->mainState = VIEW_RANKINGS_APP_MAIN_STATE_WAIT_FADE_IN;
         break;
     case VIEW_RANKINGS_APP_MAIN_STATE_WAIT_FADE_IN:
@@ -304,7 +318,7 @@ BOOL ViewRankingsApp_Main(OVY_MANAGER *man, int *pState) {
         }
         break;
     case VIEW_RANKINGS_APP_MAIN_STATE_FADE_OUT:
-        BeginNormalPaletteFade(0, 0, 0, RGB_BLACK, 6, 1, HEAP_ID_9E);
+        BeginNormalPaletteFade(0, 0, 0, RGB_BLACK, 6, 1, HEAP_ID_RANKINGS_APP);
         appData->mainState = VIEW_RANKINGS_APP_MAIN_STATE_WAIT_FADE_OUT;
         break;
     case VIEW_RANKINGS_APP_MAIN_STATE_WAIT_FADE_OUT:
@@ -348,7 +362,7 @@ BOOL ViewRankingsApp_Exit(OVY_MANAGER *man, int *pState) {
     FontID_Release(4);
     OamManager_Free();
     ObjCharTransfer_Destroy();
-    sub_02022608();
+    ObjPlttTransfer_Destroy();
     YesNoPrompt_Destroy(appData->yesNoPrompt);
     FreeToHeap(appData->touchscreenHitboxes);
     FreeToHeap(appData->bgConfig);
@@ -357,34 +371,34 @@ BOOL ViewRankingsApp_Exit(OVY_MANAGER *man, int *pState) {
     }
     FreeToHeap(appData->records);
     FreeToHeap(appData);
-    DestroyHeap(HEAP_ID_9E);
+    DestroyHeap(HEAP_ID_RANKINGS_APP);
     return TRUE;
 }
 
 static void ViewRankingsApp_Init_Internal(OVY_MANAGER *man, int *pState) {
     ViewRankingsArgs *args = OverlayManager_GetArgs(man);
-    CreateHeap(HEAP_ID_3, HEAP_ID_9E, 0x10000);
-    ViewRankingsAppData *data = OverlayManager_CreateAndGetData(man, sizeof(ViewRankingsAppData), HEAP_ID_9E);
+    CreateHeap(HEAP_ID_3, HEAP_ID_RANKINGS_APP, 0x10000);
+    ViewRankingsAppData *data = OverlayManager_CreateAndGetData(man, sizeof(ViewRankingsAppData), HEAP_ID_RANKINGS_APP);
     memset(data, 0, sizeof(ViewRankingsAppData));
-    data->bgConfig = BgConfig_Alloc(HEAP_ID_9E);
+    data->bgConfig = BgConfig_Alloc(HEAP_ID_RANKINGS_APP);
     ViewRankings_SetGfxBanks();
     ViewRankings_InitBgLayers(data->bgConfig);
     ViewRankings_InitObjCharTransfer();
     ViewRankings_CreateOamManager();
-    ViewRankings_LoadSpriteGraphics(data, HEAP_ID_9E);
+    ViewRankings_LoadSpriteGraphics(data, HEAP_ID_RANKINGS_APP);
     ViewRankings_CreateSpriteResourcesHeader(data);
-    data->yesNoPrompt = YesNoPrompt_Create(HEAP_ID_9E);
+    data->yesNoPrompt = YesNoPrompt_Create(HEAP_ID_RANKINGS_APP);
     data->frame       = Options_GetFrame(Save_PlayerData_GetOptionsAddr(args->saveData));
     Main_SetVBlankIntrCB(VBlankCB_ViewRankings, data->bgConfig);
     data->mainState = 0;
     ResetAllTextPrinters();
-    FontID_Alloc(4, HEAP_ID_9E);
-    ViewRankings_LoadBgGraphics(data->bgConfig, HEAP_ID_9E);
-    LoadFontPal0(GF_PAL_LOCATION_MAIN_BG, (enum GFPalSlotOffset)0x1E0, HEAP_ID_9E);
+    FontID_Alloc(4, HEAP_ID_RANKINGS_APP);
+    ViewRankings_LoadBgGraphics(data->bgConfig, HEAP_ID_RANKINGS_APP);
+    LoadFontPal0(GF_PAL_LOCATION_MAIN_BG, (enum GFPalSlotOffset)0x1E0, HEAP_ID_RANKINGS_APP);
     ViewRankings_CreateWindows(data);
     ViewRankings_CreateSprites(data);
     GfGfx_EngineATogglePlanes(GX_PLANEMASK_OBJ, GF_PLANE_TOGGLE_ON);
-    ViewRankings_CreateTouchscreenHitboxes(data, HEAP_ID_9E);
+    ViewRankings_CreateTouchscreenHitboxes(data, HEAP_ID_RANKINGS_APP);
     data->state        = 1;
     data->saveRankings = Save_Rankings_Get(args->saveData);
     data->page         = args->page_scroll % 3;
@@ -434,7 +448,7 @@ static BOOL ViewRankingsApp_Main_Internal(ViewRankingsAppData *appData) {
 
 static void ViewRankingsApp_RunSpriteAnimations(ViewRankingsAppData *appData) {
     if (appData->spriteList != NULL) {
-        sub_0202457C(appData->spriteList);
+        SpriteList_RenderAndAnimateSprites(appData->spriteList);
     }
 }
 
@@ -559,17 +573,17 @@ static void ViewRankings_InitObjCharTransfer(void) {
         .maxTasks = 10,
         .sizeMain = 0x10000,
         .sizeSub  = 0x4000,
-        .heapId   = HEAP_ID_9E
+        .heapId   = HEAP_ID_RANKINGS_APP
     };
     ObjCharTransfer_Init(&template);
-    sub_02022588(1, HEAP_ID_9E);
+    ObjPlttTransfer_Init(1, HEAP_ID_RANKINGS_APP);
     ObjCharTransfer_ClearBuffers();
-    sub_02022638();
+    ObjPlttTransfer_Reset();
 }
 
 static void ViewRankings_CreateOamManager(void) {
     NNS_G2dInitOamManagerModule();
-    OamManager_Create(0, 126, 0, 32, 0, 126, 0, 32, HEAP_ID_9E);
+    OamManager_Create(0, 126, 0, 32, 0, 126, 0, 32, HEAP_ID_RANKINGS_APP);
 }
 
 static void VBlankCB_ViewRankings(void *cbData) {
@@ -636,7 +650,7 @@ static void setSpriteTemplate(SpriteTemplate *spriteTemplate, ViewRankingsAppDat
     spriteTemplate->rotation    = 0;
     spriteTemplate->priority    = 0;
     spriteTemplate->whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN;
-    spriteTemplate->heapId      = HEAP_ID_9E;
+    spriteTemplate->heapId      = HEAP_ID_RANKINGS_APP;
 }
 
 static void ViewRankings_CreateSprites(ViewRankingsAppData *appData) {
@@ -646,43 +660,43 @@ static void ViewRankings_CreateSprites(ViewRankingsAppData *appData) {
 
     spriteTemplate.position.x = FX32_CONST(224);
     spriteTemplate.position.y = FX32_CONST(176);
-    sprite                    = CreateSprite(&spriteTemplate);
-    Set2dSpriteAnimActiveFlag(sprite, TRUE);
-    Set2dSpriteAnimSeqNo(sprite, 2);
+    sprite                    = Sprite_CreateAffine(&spriteTemplate);
+    Sprite_SetAnimActiveFlag(sprite, TRUE);
+    Sprite_SetAnimCtrlSeq(sprite, 2);
     Sprite_SetPriority(sprite, 1);
-    Set2dSpriteVisibleFlag(sprite, TRUE);
+    Sprite_SetVisibleFlag(sprite, TRUE);
     appData->sprites[VIEW_RANKINGS_APP_SPRITE_CURSOR] = sprite;
 
     spriteTemplate.position.x = FX32_CONST(16);
     spriteTemplate.position.y = FX32_CONST(96);
-    sprite                    = CreateSprite(&spriteTemplate);
-    Set2dSpriteAnimActiveFlag(sprite, TRUE);
-    Set2dSpriteAnimSeqNo(sprite, 3);
-    Set2dSpriteVisibleFlag(sprite, TRUE);
+    sprite                    = Sprite_CreateAffine(&spriteTemplate);
+    Sprite_SetAnimActiveFlag(sprite, TRUE);
+    Sprite_SetAnimCtrlSeq(sprite, 3);
+    Sprite_SetVisibleFlag(sprite, TRUE);
     appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW] = sprite;
 
     spriteTemplate.position.x = FX32_CONST(240);
     spriteTemplate.position.y = FX32_CONST(96);
-    sprite                    = CreateSprite(&spriteTemplate);
-    Set2dSpriteAnimActiveFlag(sprite, TRUE);
-    Set2dSpriteAnimSeqNo(sprite, 5);
-    Set2dSpriteVisibleFlag(sprite, TRUE);
+    sprite                    = Sprite_CreateAffine(&spriteTemplate);
+    Sprite_SetAnimActiveFlag(sprite, TRUE);
+    Sprite_SetAnimCtrlSeq(sprite, 5);
+    Sprite_SetVisibleFlag(sprite, TRUE);
     appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW] = sprite;
 
     spriteTemplate.position.x = FX32_CONST(224);
     spriteTemplate.position.y = FX32_CONST(176);
-    sprite                    = CreateSprite(&spriteTemplate);
-    Set2dSpriteAnimActiveFlag(sprite, TRUE);
-    Set2dSpriteAnimSeqNo(sprite, 0);
-    Set2dSpriteVisibleFlag(sprite, TRUE);
+    sprite                    = Sprite_CreateAffine(&spriteTemplate);
+    Sprite_SetAnimActiveFlag(sprite, TRUE);
+    Sprite_SetAnimCtrlSeq(sprite, 0);
+    Sprite_SetVisibleFlag(sprite, TRUE);
     appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN] = sprite;
 
     spriteTemplate.position.x = FX32_CONST(64);
     spriteTemplate.position.y = FX32_CONST(176);
-    sprite                    = CreateSprite(&spriteTemplate);
-    Set2dSpriteAnimActiveFlag(sprite, TRUE);
-    Set2dSpriteAnimSeqNo(sprite, 8);
-    Set2dSpriteVisibleFlag(sprite, TRUE);
+    sprite                    = Sprite_CreateAffine(&spriteTemplate);
+    Sprite_SetAnimActiveFlag(sprite, TRUE);
+    Sprite_SetAnimCtrlSeq(sprite, 8);
+    Sprite_SetVisibleFlag(sprite, TRUE);
     appData->sprites[VIEW_RANKINGS_APP_SPRITE_DELETE_RECORD] = sprite;
 }
 
@@ -763,13 +777,13 @@ static BOOL ViewRankings_HandleInput_BrowsePages(ViewRankingsAppData *appData, V
         break;
     case VIEW_RANKINGS_APP_INPUT_X_BUTTON:
         PlaySE(SEQ_SE_DP_DECIDE);
-        Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_DELETE_RECORD], 9);
+        Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_DELETE_RECORD], 9);
         ViewRankings_ToggleDeleteMode(appData, 1);
         break;
     case VIEW_RANKINGS_APP_INPUT_B_BUTTON:
     case VIEW_RANKINGS_APP_INPUT_A_BUTTON:
         PlaySE(SEQ_SE_DP_DECIDE);
-        Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
+        Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
         return TRUE;
     }
 
@@ -797,13 +811,13 @@ static void ViewRankings_HandleInput_SelectRecordToDelete(ViewRankingsAppData *a
             ViewRankings_AskConfirmDeleteRecord(appData);
         } else {
             PlaySE(SEQ_SE_DP_DECIDE);
-            Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
+            Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
             ViewRankings_ToggleDeleteMode(appData, 0);
         }
         break;
     case VIEW_RANKINGS_APP_INPUT_B_BUTTON:
         PlaySE(SEQ_SE_DP_DECIDE);
-        Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
+        Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
         ViewRankings_ToggleDeleteMode(appData, 0);
         break;
     case VIEW_RANKINGS_APP_INPUT_A_BUTTON:
@@ -812,7 +826,7 @@ static void ViewRankings_HandleInput_SelectRecordToDelete(ViewRankingsAppData *a
             ViewRankings_AskConfirmDeleteRecord(appData);
         } else {
             PlaySE(SEQ_SE_DP_DECIDE);
-            Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
+            Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RETURN], 1);
             ViewRankings_ToggleDeleteMode(appData, 0);
         }
         break;
@@ -855,7 +869,7 @@ static void ViewRankings_DrawCursor(ViewRankingsAppData *appData) {
     pos.x       = sCursorPositionParams[idx].x * FX32_ONE;
     pos.y       = sCursorPositionParams[idx].y * FX32_ONE;
     Sprite_SetMatrix(appData->sprites[VIEW_RANKINGS_APP_SPRITE_CURSOR], &pos);
-    Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_CURSOR], sCursorPositionParams[idx].anim);
+    Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_CURSOR], sCursorPositionParams[idx].anim);
 }
 
 static void ViewRankings_SwitchPage(ViewRankingsAppData *appData, int direction) {
@@ -868,9 +882,9 @@ static void ViewRankings_SwitchPage(ViewRankingsAppData *appData, int direction)
     appData->recordIdx = new;
     PlaySE(SEQ_SE_DP_SELECT78);
     if (direction > 0) {
-        Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], 6);
+        Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], 6);
     } else if (direction < 0) {
-        Set2dSpriteAnimSeqNo(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], 4);
+        Sprite_SetAnimCtrlSeq(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], 4);
     }
     ViewRankings_PrintRecordStatHeaderText(appData);
     appData->state = VIEW_RANKINGS_APP_STATE_REDRAW;
@@ -880,27 +894,27 @@ static void ViewRankings_ToggleDeleteMode(ViewRankingsAppData *appData, BOOL sel
     appData->isDeleteMode = selection;
     if (selection == FALSE) {
         appData->cursorPos = 6;
-        Set2dSpriteVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], TRUE);
-        Set2dSpriteVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], TRUE);
+        Sprite_SetVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], TRUE);
+        Sprite_SetVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], TRUE);
         ViewRankings_HideSelectRecordToDeleteText(appData);
     } else {
         appData->cursorPos = 0;
-        Set2dSpriteVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], FALSE);
-        Set2dSpriteVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], FALSE);
+        Sprite_SetVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_RIGHT_ARROW], FALSE);
+        Sprite_SetVisibleFlag(appData->sprites[VIEW_RANKINGS_APP_SPRITE_LEFT_ARROW], FALSE);
         ViewRankings_PrintSelectRecordToDeleteText(appData);
     }
     ViewRankings_DrawCursor(appData);
 }
 
 static void ViewRankings_CreateWindows(ViewRankingsAppData *appData) {
-    LoadFontPal0(GF_PAL_LOCATION_MAIN_BG, (enum GFPalSlotOffset)0x1E0, HEAP_ID_9E);
+    LoadFontPal0(GF_PAL_LOCATION_MAIN_BG, (enum GFPalSlotOffset)0x1E0, HEAP_ID_RANKINGS_APP);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_RANKING], GF_BG_LYR_MAIN_1, 5, 7, 2, 12, 15, 0x1);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_RECORDS], GF_BG_LYR_MAIN_1, 7, 7, 20, 12, 15, 0x19);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_HEADER], GF_BG_LYR_MAIN_2, 2, 1, 28, 4, 15, 0x109);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_RETURN], GF_BG_LYR_MAIN_2, 25, 21, 6, 2, 1, 0x179);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_DELETE_RECORD], GF_BG_LYR_MAIN_2, 4, 21, 12, 2, 1, 0x185);
     AddWindowParameterized(appData->bgConfig, &appData->windows[VIEW_RANKINGS_APP_WINDOW_SELECT_RECORD_TO_DELETE], GF_BG_LYR_MAIN_0, 2, 1, 28, 4, 15, 0x1F);
-    LoadUserFrameGfx2(appData->bgConfig, GF_BG_LYR_MAIN_0, 0x1, 12, appData->frame, HEAP_ID_9E);
+    LoadUserFrameGfx2(appData->bgConfig, GF_BG_LYR_MAIN_0, 0x1, 12, appData->frame, HEAP_ID_RANKINGS_APP);
 }
 
 static void ViewRankings_HideSelectRecordToDeleteText(ViewRankingsAppData *appData) {
@@ -915,11 +929,11 @@ static void ViewRankingsApp_GetRankingsFromSave(ViewRankingsAppData *appData, Sa
     ViewRankingsPage *ptr;
     int cnt;
 
-    appData->records = AllocFromHeap(HEAP_ID_9E, appData->pageLength * sizeof(ViewRankingsAppPage));
+    appData->records = AllocFromHeap(HEAP_ID_RANKINGS_APP, appData->pageLength * sizeof(ViewRankingsAppPage));
     MI_CpuClear8(appData->records, appData->pageLength * sizeof(ViewRankingsAppPage));
-    appData->pages[0] = Save_GetPlayerViewRankingPage(saveData, appData->page, HEAP_ID_9E);
+    appData->pages[0] = Save_GetPlayerViewRankingPage(saveData, appData->page, HEAP_ID_RANKINGS_APP);
     for (i = 0; i < appData->pageLength; ++i) {
-        appData->pages[1 + i] = Save_GetReceivedViewRankingPage(appData->saveRankings, appData->pageOffset + appData->scope * RANKINGS_COUNT + i, HEAP_ID_9E);
+        appData->pages[1 + i] = Save_GetReceivedViewRankingPage(appData->saveRankings, appData->pageOffset + appData->scope * RANKINGS_COUNT + i, HEAP_ID_RANKINGS_APP);
         cnt                   = 0;
         inserted              = FALSE;
         ptr                   = appData->pages[1 + i];
@@ -957,9 +971,9 @@ static void ViewRankingsApp_GetRankingsFromSave(ViewRankingsAppData *appData, Sa
 }
 
 static void ViewRankings_CreateStrings(ViewRankingsAppData *appData) {
-    appData->msgData          = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, NARC_msgdata_msg, NARC_msg_msg_0421_bin, HEAP_ID_9E);
-    appData->msgFormat        = MessageFormat_New_Custom(2, 76, HEAP_ID_9E);
-    appData->formatedStrBuf   = String_New(76, HEAP_ID_9E);
+    appData->msgData          = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, NARC_msgdata_msg, NARC_msg_msg_0421_bin, HEAP_ID_RANKINGS_APP);
+    appData->msgFormat        = MessageFormat_New_Custom(2, 76, HEAP_ID_RANKINGS_APP);
+    appData->formatedStrBuf   = String_New(76, HEAP_ID_RANKINGS_APP);
     appData->playerNameString = NewString_ReadMsgData(appData->msgData, msg_0421_00043);
     appData->rankingString    = NewString_ReadMsgData(appData->msgData, msg_0421_00042);
     for (int i = 0; i < VIEW_RANKINGS_MISC_STRING_MAX; ++i) {
@@ -1058,7 +1072,7 @@ static void ViewRankings_PrintDeleteXsRecordAreYouSure(ViewRankingsAppData *appD
     DrawFrameAndWindow2(&appData->windows[VIEW_RANKINGS_APP_WINDOW_SELECT_RECORD_TO_DELETE], TRUE, 0x1, 12);
     FillWindowPixelBuffer(&appData->windows[VIEW_RANKINGS_APP_WINDOW_SELECT_RECORD_TO_DELETE], 0xFF);
     BufferString(appData->msgFormat, 0, page->entries[entryIdx].pageEntry->playerName, 2, 1, 2);
-    string = ReadMsgData_ExpandPlaceholders(appData->msgFormat, appData->msgData, msg_0421_00049, HEAP_ID_9E);
+    string = ReadMsgData_ExpandPlaceholders(appData->msgFormat, appData->msgData, msg_0421_00049, HEAP_ID_RANKINGS_APP);
     AddTextPrinterParameterizedWithColor(&appData->windows[VIEW_RANKINGS_APP_WINDOW_SELECT_RECORD_TO_DELETE], 0, string, 0, 0, TEXT_SPEED_NOTRANSFER, MAKE_TEXT_COLOR(1, 2, 0), NULL);
     String_Delete(string);
     CopyWindowToVram(&appData->windows[VIEW_RANKINGS_APP_WINDOW_SELECT_RECORD_TO_DELETE]);
@@ -1126,9 +1140,7 @@ static void ViewRankings_AskConfirmDeleteRecord(ViewRankingsAppData *appData) {
 }
 
 static void dimAllMainBgsExceptLyr0(void) {
-    G2_SetBlendBrightness(
-        GX_PLANEMASK_ALL & ~GX_PLANEMASK_BG0,
-        -7);
+    G2_SetBlendBrightness(GX_PLANEMASK_ALL & ~GX_PLANEMASK_BG0, -7);
 }
 
 static void resetMainBgsBrightness(void) {

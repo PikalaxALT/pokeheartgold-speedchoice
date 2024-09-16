@@ -9,8 +9,8 @@
 #include "player_data.h"
 #include "save.h"
 #include "save_frontier.h"
+#include "sprite.h"
 #include "unk_02009D48.h"
-#include "unk_02023694.h"
 
 #define ARCADE_ENEMY_POKEMON_MAX 4
 
@@ -67,7 +67,7 @@ typedef struct GAME_BOARD_SUB_3E8 {
 
 typedef struct GAME_BOARD_WORK {
     OVY_MANAGER *man;
-    FRONTIER_SAVE *frontierSaveData;
+    FrontierSave *frontierSaveData;
     u8 substate;
     u8 type;
     u8 unkA;
