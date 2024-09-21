@@ -15,6 +15,7 @@ typedef struct TextFlags {
     u8 unk0_7                : 1;
     u8 unk1_0                : 1;
     u8 unk1_1                : 1;
+    u8 holdToMash            : 1;
 } TextFlags;
 
 typedef struct TextPrinterSubStruct {
@@ -42,5 +43,8 @@ void sub_02002C20(const TouchscreenHitbox *hitbox);
 void sub_02002C40(void);
 void sub_02002C60(BOOL a0);
 void sub_02002C90(void);
+
+// Speedchoice change
+void TextFlags_SetHoldToMash(BOOL holdToMash);
 
 #endif // POKEHEARTGOLD_RENDER_TEXT_H

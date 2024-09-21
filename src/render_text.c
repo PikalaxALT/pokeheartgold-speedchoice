@@ -28,8 +28,9 @@ static BOOL TextPrinterWaitAutoMode(TextPrinter *printer);
 static BOOL TextPrinterWaitWithDownArrow(TextPrinter *printer);
 static u8 TextPrinterWait(TextPrinter *printer);
 
+// Speedchoice change
 static BOOL sub_020021A0(TextPrinterSubStruct *subStruct) {
-    if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) && subStruct->hasPrintBeenSpedUp) {
+    if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) && (sTextFlags.holdToMash || subStruct->hasPrintBeenSpedUp)) {
         sTextFlags.unk1_0 = FALSE;
         return TRUE;
     }
@@ -84,28 +85,29 @@ RenderResult RenderText(TextPrinter *printer) {
 
     switch (printer->state) {
     case 0:
-        if (sub_020021A0(subStruct)) {
-            printer->delayCounter = 0;
-            if (printer->textSpeedBottom != 0) {
-                sTextFlags.unk0_6 = 1;
-            }
+        // Speedchoice change
+        // if (sub_020021A0(subStruct)) {
+        printer->delayCounter = 0;
+        if (printer->textSpeedBottom != 0) {
+            sTextFlags.unk0_6 = 1;
         }
+        // }
 
-        if (printer->delayCounter && printer->textSpeedBottom) {
-            printer->delayCounter--;
+        // if (printer->delayCounter && printer->textSpeedBottom) {
+        //     printer->delayCounter--;
 
-            if (sTextFlags.canABSpeedUpPrint != 0) {
-                if (sub_02002220()) {
-                    subStruct->hasPrintBeenSpedUp = 1;
-                    printer->delayCounter         = 0;
-                }
-            }
+        //     if (sTextFlags.canABSpeedUpPrint != 0) {
+        //         if (sub_02002220()) {
+        //             subStruct->hasPrintBeenSpedUp = 1;
+        //             printer->delayCounter         = 0;
+        //         }
+        //     }
 
-            return RENDER_UPDATE;
-        }
+        //     return RENDER_UPDATE;
+        // }
 
-        printer->delayCounter = printer->textSpeedBottom;
-        currentChar           = *printer->template.currentChar.raw;
+        // printer->delayCounter = printer->textSpeedBottom;
+        currentChar = *printer->template.currentChar.raw;
         printer->template.currentChar.raw++;
 
         GF_ASSERT(currentChar != 0xF100);
@@ -482,7 +484,9 @@ static void TextPrinterClearDownArrow(TextPrinter *printer) {
 
 static BOOL TextPrinterContinue(TextPrinter *printer) {
 #pragma unused(printer)
-    if (sub_02002220()) {
+    // Speedchoice change
+    TextPrinterSubStruct *subStruct = (TextPrinterSubStruct *)printer->subStructFields;
+    if (sub_02002220() || (sTextFlags.holdToMash && sub_020021A0(subStruct))) {
         PlaySE(SEQ_SE_DP_SELECT);
 
         sTextFlags.unk0_7 = 1;
@@ -595,4 +599,9 @@ void sub_02002C90(void) {
     TextFlags_SetCanABSpeedUpPrint(FALSE);
     sub_02002B50(0);
     sub_02002B8C(FALSE);
+}
+
+// Speedchoice change
+void TextFlags_SetHoldToMash(BOOL holdToMash) {
+    sTextFlags.holdToMash = holdToMash;
 }

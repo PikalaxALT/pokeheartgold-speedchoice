@@ -4,11 +4,12 @@
 
 #include "font.h"
 #include "gf_gfx_loader.h"
+#include "render_text.h"
 #include "sys_task.h"
 
 static const struct FontInfo *sFonts;
 
-static u8 _021D1F6C;
+static u8 sDisableTextPrinters;
 static u16 sFgColor, sShadowColor, sBgColor;
 static SysTask *sTextPrinterTasks[MAX_TEXT_PRINTERS];
 static u16 sFontHalfRowLookupTable[4 * 4 * 4 * 4];
@@ -164,7 +165,7 @@ static u8 AddTextPrinter(TextPrinterTemplate *template, u32 speed, PrinterCallba
     printer->template                 = *template;
     printer->template.currentChar.raw = String_cstr(printer->template.currentChar.wrapped);
     printer->callback                 = callback;
-    _021D1F6C                         = 0;
+    sDisableTextPrinters              = 0;
 
     sub_020204B8(printer);
 
@@ -198,32 +199,43 @@ static u8 AddTextPrinter(TextPrinterTemplate *template, u32 speed, PrinterCallba
     return MAX_TEXT_PRINTERS;
 }
 
+// Speedchoice change
 static void RunTextPrinter(SysTask *task, TextPrinter *printer) {
-    if (_021D1F6C != 0) {
+    if (sDisableTextPrinters != 0) {
         return;
     }
 
-    if (printer->unk2D == 0) {
-        printer->unk2E = 0;
+    RenderResult renderResult;
+    BOOL isInstantText = TRUE;
+    do {
+        if (printer->unk2D == 0) {
+            printer->unk2E = 0;
 
-        GenerateFontHalfRowLookupTable(printer->template.fgColor, printer->template.bgColor, printer->template.shadowColor);
+            GenerateFontHalfRowLookupTable(printer->template.fgColor, printer->template.bgColor, printer->template.shadowColor);
 
-        switch (RenderFont(printer)) {
-        case RENDER_PRINT:
-            CopyWindowToVram(printer->template.window);
-            // fallthrough
-        case RENDER_UPDATE:
-            if (printer->callback != NULL) {
-                printer->unk2D = printer->callback(&printer->template, printer->unk2E);
+            renderResult = RenderFont(printer);
+            switch (renderResult) {
+            case RENDER_REPEAT:
+                break;
+            case RENDER_PRINT:
+                CopyWindowToVram(printer->template.window);
+                // fallthrough
+            case RENDER_UPDATE:
+                if (printer->callback != NULL) {
+                    printer->unk2D = printer->callback(&printer->template, printer->unk2E);
+                }
+                if (renderResult == RENDER_UPDATE) {
+                    isInstantText = FALSE;
+                }
+                break;
+            case RENDER_FINISH:
+                DestroyTextPrinterSysTask(printer->id);
+                return;
             }
-            return;
-        case RENDER_FINISH:
-            DestroyTextPrinterSysTask(printer->id);
-            return;
+        } else {
+            printer->unk2D = printer->callback(&printer->template, printer->unk2E);
         }
-    } else {
-        printer->unk2D = printer->callback(&printer->template, printer->unk2E);
-    }
+    } while (isInstantText);
 }
 
 static RenderResult RenderFont(TextPrinter *printer) {

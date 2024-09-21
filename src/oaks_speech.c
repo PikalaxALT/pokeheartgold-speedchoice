@@ -20,6 +20,7 @@
 #include "player_data.h"
 #include "render_text.h"
 #include "render_window.h"
+#include "save_speedchoice.h"
 #include "sound.h"
 #include "sound_02004A44.h"
 #include "text.h"
@@ -639,6 +640,7 @@ BOOL OakSpeech_Main(OVY_MANAGER *ovyMan, int *pState) {
 BOOL OakSpeech_Exit(OVY_MANAGER *ovyMan, int *pState) {
     OakSpeechData *data = OverlayManager_GetData(ovyMan);
     HeapID heapId       = data->heapId;
+
     FontID_Release(4);
     PlayerName_StringToFlat(Save_PlayerData_GetProfileAddr(data->saveData), data->namingScreenArgs_Player->nameInputString);
     PlayerProfile_SetTrainerGender(Save_PlayerData_GetProfileAddr(data->saveData), data->namingScreenArgs_Player->playerGender);
@@ -1775,6 +1777,9 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
 
     // NO INFO NEEDED
     case OAK_SPEECH_MAIN_STATE_NO_INFO_NEEDED_FADE_IN:
+        // Speedchoice change, debug
+        Speedchoice_SetAttr(Save_Speedchoice_Get(data->saveData), SPEEDCHOICE_HOLD_TO_MASH, SPEEDCHOICE_HOLD_TO_MASH_YES);
+
         OakSpeech_ClearBgLayer0TopBottomAndCommit(data);
         OakSpeech_TouchToAdvanceButtonAction(data, TOUCHTOADVANCE_SHOW);
         OakSpeech_SetButtonTutorialScreenLayout(data, 0);
@@ -1788,6 +1793,8 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
         break;
     case OAK_SPEECH_MAIN_STATE_WAIT_FADE_IN_NO_INFO_NEEDED:
         if (IsPaletteFadeFinished() == TRUE && OakSpeech_WaitFrames(data, 40) == TRUE) {
+            // Speedchoice change
+            TextFlags_SetHoldToMash(Speedchoice_GetAttr(Save_Speedchoice_Get(data->saveData), SPEEDCHOICE_HOLD_TO_MASH));
             data->state       = OAK_SPEECH_MAIN_STATE_PRINT_TIME_OF_DAY_MSG;
             data->queuedMsgId = OakSpeech_GetTimeOfDayIntroMsg();
         }

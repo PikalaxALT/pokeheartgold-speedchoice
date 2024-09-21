@@ -1,3 +1,4 @@
+#include "save_speedchoice.h"
 #define _IN_SCRCMD_C
 
 #include "constants/accessories.h"
@@ -605,6 +606,14 @@ BOOL ScrCmd_WaitButton(ScriptContext *ctx) {
 }
 
 static BOOL sub_02041000(ScriptContext *ctx) {
+    // Speedchoice change
+    SaveData *saveData = FieldSystem_GetSaveData(ctx->fieldSystem);
+    if (Speedchoice_GetAttr(Save_Speedchoice_Get(saveData), SPEEDCHOICE_HOLD_TO_MASH)) {
+        if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
+            return TRUE;
+        }
+    }
+
     return (gSystem.newKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0;
 }
 
@@ -617,6 +626,14 @@ BOOL ScrCmd_WaitButtonOrDelay(ScriptContext *ctx) {
 }
 
 static BOOL sub_02041040(ScriptContext *ctx) {
+    // Speedchoice change
+    SaveData *saveData = FieldSystem_GetSaveData(ctx->fieldSystem);
+    if (Speedchoice_GetAttr(Save_Speedchoice_Get(saveData), SPEEDCHOICE_HOLD_TO_MASH)) {
+        if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
+            return TRUE;
+        }
+    }
+
     if ((gSystem.newKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
         return TRUE;
     }
@@ -632,6 +649,14 @@ BOOL ScrCmd_WaitButtonOrWalkAway(ScriptContext *ctx) {
 }
 
 static BOOL sub_02041074(ScriptContext *ctx) {
+    // Speedchoice change
+    SaveData *saveData = FieldSystem_GetSaveData(ctx->fieldSystem);
+    if (Speedchoice_GetAttr(Save_Speedchoice_Get(saveData), SPEEDCHOICE_HOLD_TO_MASH)) {
+        if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
+            return TRUE;
+        }
+    }
+
     int new_keys = gSystem.newKeys;
 
     if ((new_keys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
@@ -661,6 +686,14 @@ BOOL ScrCmd_WaitButtonOrDpad(ScriptContext *ctx) {
 }
 
 static BOOL sub_020410F0(ScriptContext *ctx) {
+    // Speedchoice change
+    SaveData *saveData = FieldSystem_GetSaveData(ctx->fieldSystem);
+    if (Speedchoice_GetAttr(Save_Speedchoice_Get(saveData), SPEEDCHOICE_HOLD_TO_MASH)) {
+        if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
+            return TRUE;
+        }
+    }
+
     if ((gSystem.newKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) != 0) {
         return TRUE;
     }
