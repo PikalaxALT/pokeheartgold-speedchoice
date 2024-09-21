@@ -65,7 +65,7 @@ static BOOL sub_02002220(void) {
         }
 
         if (sTextFlags.unk1_1) {
-            if (TouchscreenHitbox_TouchHeldIsIn(&sTouchScreenHitbox)) {
+            if (TouchscreenHitbox_TouchNewIsIn(&sTouchScreenHitbox)) {
                 sTextFlags.unk1_0 = TRUE;
                 return TRUE;
             }
