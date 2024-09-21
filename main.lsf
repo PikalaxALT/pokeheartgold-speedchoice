@@ -9,7 +9,6 @@ Static main
 {
     Address 0x02000000
     StackSize 0 2048
-    Object src/speedchoice/cv.o (.parent)
     Object src/pm_version.o
     Object src/main.o
     Object src/list_menu.o
