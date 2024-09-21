@@ -4758,6 +4758,12 @@
 	.byte \arg1
 	.endm
 
+	.macro get_speedchoice_attr attr, dest
+	.short 853
+	.byte \attr
+	.byte \dest
+	.endm
+
 	; Script headers
 
 	.macro map_script kind, script

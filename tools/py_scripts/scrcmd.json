@@ -5333,6 +5333,13 @@
         1,
         1
       ]
+    },
+    {
+      "name": "get_speedchoice_attr",
+      "args": [
+        1,
+        "var"
+      ]
     }
   ],
   "argtypes": {

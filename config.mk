@@ -59,4 +59,4 @@ ifneq ($(filter $(buildname),$(SUPPORTED_ROMS)),$(buildname))
 $(error $(buildname) is not supported, choose from: $(SUPPORTED_ROMS))
 endif
 
-buildname := $(buildname).speedchoice
+# buildname := $(buildname).speedchoice

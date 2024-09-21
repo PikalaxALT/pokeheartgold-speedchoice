@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<body language="English">
+    <row id="msg_speedchoice_options_menu_header" index="0">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Choose your options below. Press START to finish.</language>
+    </row>
+</body>

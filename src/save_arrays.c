@@ -26,6 +26,7 @@
 #include "save_pokegear.h"
 #include "save_rankings.h"
 #include "save_special_ribbons.h"
+#include "save_speedchoice.h"
 #include "save_trainer_card.h"
 #include "save_trainer_house.h"
 #include "save_vars_flags.h"
@@ -301,6 +302,12 @@ const struct SaveChunkHeader gSaveChunkHeaders[] = {
      0,
      (SAVESIZEFN)Save_TrainerHouse_sizeof,
      (SAVEINITFN)Save_TrainerHouse_Init,
+     },
+    {
+     SAVE_SPEEDCHOICE,
+     0,
+     (SAVESIZEFN)Save_Speedchoice_sizeof,
+     (SAVEINITFN)Save_Speedchoice_Init,
      },
     {
      SAVE_PCSTORAGE,

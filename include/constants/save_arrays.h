@@ -44,8 +44,9 @@
 #define SAVE_APRICORN_BOX                  38
 #define SAVE_POKEWALKER                    39
 #define SAVE_TRAINER_HOUSE                 40
-#define SAVE_PCSTORAGE                     41
-#define SAVE_BLOCK_NUM                     42
+#define SAVE_SPEEDCHOICE                   41
+#define SAVE_PCSTORAGE                     42
+#define SAVE_BLOCK_NUM                     43
 
 #define SAVE_PAGE_MAX    35
 #define SAVE_SECTOR_SIZE 0x1000

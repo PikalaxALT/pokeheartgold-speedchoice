@@ -99,7 +99,7 @@ void FontID_Release(FontID fontId) {
     }
 }
 
-struct GlyphInfo *FontID_TryLoadGlyph(FontID fontId, u16 glyphId) {
+GlyphInfo *FontID_TryLoadGlyph(FontID fontId, u16 glyphId) {
     TryLoadGlyph(sFontWork->fontDataMan[fontId], glyphId, &sFontWork->glyph_buffer);
     return &sFontWork->glyph_buffer;
 }
@@ -110,7 +110,7 @@ RenderResult FontID_RenderText(int fontId, TextPrinter *printer) {
     sub = (struct TextPrinterSubStruct *)printer->subStructFields;
 
     if (!sub->hasFontIdBeenSet) {
-        sub->fontId           = fontId;
+        sub->glyphId          = fontId;
         sub->hasFontIdBeenSet = TRUE;
     }
     return RenderText(printer);

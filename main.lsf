@@ -9,12 +9,13 @@ Static main
 {
     Address 0x02000000
     StackSize 0 2048
+    Object src/speedchoice/cv.o (.parent)
     Object src/pm_version.o
     Object src/main.o
     Object src/list_menu.o
     Object src/list_menu_2d.o
     Object src/string_util.o
-    Object asm/render_text.o
+    Object src/render_text.o
     Object src/font.o
     Object src/palette.o
     Object src/sound.o
@@ -141,6 +142,7 @@ Static main
     Object asm/unk_02031B0C.o
     Object src/pokewalker.o
     Object src/save_trainer_house.o
+    Object src/save_speedchoice.o
     Object asm/unk_02032844.o
     Object asm/unk_02033AE0.o
     Object asm/unk_02034354.o
@@ -188,6 +190,7 @@ Static main
     Object src/scrcmd_20.o
     Object src/scrcmd_battle_castle.o
     Object src/scrcmd_battle_arcade.o
+    Object src/scrcmd_speedchoice.o
     Object src/save_vars_flags.o
     Object src/task.o
     Object src/encounter.o

@@ -19,6 +19,7 @@
 #include "constants/sndseq.h"
 #include "constants/spawns.h"
 #include "constants/species.h"
+#include "constants/speedchoice.h"
 #include "constants/sprites.h"
 #include "constants/std_script.h"
 #include "constants/trainers.h"
