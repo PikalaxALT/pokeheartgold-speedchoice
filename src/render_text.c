@@ -12,67 +12,65 @@
 #include "touchscreen.h"
 #include "unk_02005D10.h"
 
-static u16 unk00;
+static u16 sDownArrowBaseTile;
 static TextFlags sTextFlags;
 static TouchscreenHitbox sTouchScreenHitbox;
 
-static const u8 _020F56BC[] = { 0, 1, 2, 1 };
-
-static BOOL sub_020021A0(TextPrinterSubStruct *subStruct);
-static BOOL sub_02002220(void);
-static void TextPrinterInitDownArrowCounters(TextPrinter *printer);
-static void TextPrinterDrawDownArrow(TextPrinter *printer);
-static void TextPrinterClearDownArrow(TextPrinter *printer);
-static BOOL TextPrinterContinue(TextPrinter *printer);
-static BOOL TextPrinterWaitAutoMode(TextPrinter *printer);
-static BOOL TextPrinterWaitWithDownArrow(TextPrinter *printer);
-static u8 TextPrinterWait(TextPrinter *printer);
+static BOOL TextPrinter_ContinueInputHeld(TextPrinterSubStruct *subStruct);
+static BOOL TextPrinter_ContinueInputNew(void);
+static void TextPrinter_InitDownArrowCounters(TextPrinter *printer);
+static void TextPrinter_DrawDownArrow(TextPrinter *printer);
+static void TextPrinter_ClearDownArrow(TextPrinter *printer);
+static BOOL TextPrinter_Continue(TextPrinter *printer);
+static BOOL TextPrinter_WaitAutoMode(TextPrinter *printer);
+static BOOL TextPrinter_WaitWithDownArrow(TextPrinter *printer);
+static u8 TextPrinter_Wait(TextPrinter *printer);
 
 // Speedchoice change
-static BOOL sub_020021A0(TextPrinterSubStruct *subStruct) {
+static BOOL TextPrinter_ContinueInputHeld(TextPrinterSubStruct *subStruct) {
     if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) && (sTextFlags.holdToMash || subStruct->hasPrintBeenSpedUp)) {
-        sTextFlags.unk1_0 = FALSE;
+        sTextFlags.touchIsSpeedingUpPrint = FALSE;
         return TRUE;
     }
 
-    if (sTextFlags.unk0_4) {
+    if (sTextFlags.canTouchSpeedUpPrint) {
         if (!gSystem.touchHeld) {
             return FALSE;
         }
 
-        if (sTextFlags.unk1_1) {
+        if (sTextFlags.touchHitboxActive) {
             if (TouchscreenHitbox_TouchHeldIsIn(&sTouchScreenHitbox)) {
-                sTextFlags.unk1_0 = TRUE;
+                sTextFlags.touchIsSpeedingUpPrint = TRUE;
                 return TRUE;
             }
             return FALSE;
         } else {
-            sTextFlags.unk1_0 = TRUE;
+            sTextFlags.touchIsSpeedingUpPrint = TRUE;
             return TRUE;
         }
     }
     return FALSE;
 }
 
-static BOOL sub_02002220(void) {
+static BOOL TextPrinter_ContinueInputNew(void) {
     if (gSystem.newKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) {
-        sTextFlags.unk1_0 = FALSE;
+        sTextFlags.touchIsSpeedingUpPrint = FALSE;
         return TRUE;
     }
 
-    if (sTextFlags.unk0_4) {
+    if (sTextFlags.canTouchSpeedUpPrint) {
         if (!gSystem.touchNew) {
             return FALSE;
         }
 
-        if (sTextFlags.unk1_1) {
+        if (sTextFlags.touchHitboxActive) {
             if (TouchscreenHitbox_TouchNewIsIn(&sTouchScreenHitbox)) {
-                sTextFlags.unk1_0 = TRUE;
+                sTextFlags.touchIsSpeedingUpPrint = TRUE;
                 return TRUE;
             }
             return FALSE;
         } else {
-            sTextFlags.unk1_0 = TRUE;
+            sTextFlags.touchIsSpeedingUpPrint = TRUE;
             return TRUE;
         }
     }
@@ -86,27 +84,10 @@ RenderResult RenderText(TextPrinter *printer) {
     switch (printer->state) {
     case 0:
         // Speedchoice change
-        // if (sub_020021A0(subStruct)) {
         printer->delayCounter = 0;
         if (printer->textSpeedBottom != 0) {
-            sTextFlags.unk0_6 = 1;
+            sTextFlags.hasSpedUpInput = 1;
         }
-        // }
-
-        // if (printer->delayCounter && printer->textSpeedBottom) {
-        //     printer->delayCounter--;
-
-        //     if (sTextFlags.canABSpeedUpPrint != 0) {
-        //         if (sub_02002220()) {
-        //             subStruct->hasPrintBeenSpedUp = 1;
-        //             printer->delayCounter         = 0;
-        //         }
-        //     }
-
-        //     return RENDER_UPDATE;
-        // }
-
-        // printer->delayCounter = printer->textSpeedBottom;
         currentChar = *printer->template.currentChar.raw;
         printer->template.currentChar.raw++;
 
@@ -130,26 +111,26 @@ RenderResult RenderText(TextPrinter *printer) {
             printer->template.currentChar.raw--;
             switch ((u16)MsgArray_GetControlCode(printer->template.currentChar.raw)) {
             case 0xFF00:
-                u16 field = (u16)MsgArray_ControlCodeGetField(
+                u16 field = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
                 if (field == 0xff) {
                     u8 r2                   = printer->template.unk1B;
-                    printer->template.unk1B = (u8)((printer->template.fgColor - 1) / 2 + 100);
+                    printer->template.unk1B = ((printer->template.fgColor - 1) / 2 + 100);
 
-                    if (!(r2 >= 100 && r2 < 107)) {
+                    if (r2 < 100 || r2 >= 107) {
                         break;
                     }
 
-                    field = (u16)(r2 - 100);
+                    field = (r2 - 100);
                 } else {
-                    if (field >= 0x64) {
-                        printer->template.unk1B = (u8)field;
+                    if (field >= 100) {
+                        printer->template.unk1B = field;
                         break;
                     }
                 }
 
-                printer->template.fgColor     = (u8)(field * 2 + 1);
-                printer->template.shadowColor = (u8)(field * 2 + 2);
+                printer->template.fgColor     = (field * 2 + 1);
+                printer->template.shadowColor = (field * 2 + 2);
 
                 GenerateFontHalfRowLookupTable(printer->template.fgColor,
                     printer->template.bgColor,
@@ -158,7 +139,7 @@ RenderResult RenderText(TextPrinter *printer) {
                 break;
 
             case 0x200:
-                field = (u16)MsgArray_ControlCodeGetField(
+                field = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
 
                 RenderScreenFocusIndicatorTile(printer,
@@ -172,7 +153,7 @@ RenderResult RenderText(TextPrinter *printer) {
                 break;
             case 0x207:
                 printer->state = 7;
-                TextPrinterInitDownArrowCounters(printer);
+                TextPrinter_InitDownArrowCounters(printer);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
                 if (*printer->template.currentChar.raw == 0xE000) {
                     ++printer->template.currentChar.raw;
@@ -180,21 +161,21 @@ RenderResult RenderText(TextPrinter *printer) {
                 return RENDER_UPDATE;
             case 0x208:
                 printer->state = 8;
-                TextPrinterInitDownArrowCounters(printer);
+                TextPrinter_InitDownArrowCounters(printer);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
                 if (*printer->template.currentChar.raw == 0xE000) {
                     ++printer->template.currentChar.raw;
                 }
                 return RENDER_UPDATE;
             case 0x201:
-                printer->delayCounter = (u8)MsgArray_ControlCodeGetField(
+                printer->delayCounter = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
                 printer->state                    = 6;
 
                 return RENDER_UPDATE;
             case 0x202:
-                printer->unk2E = (u16)MsgArray_ControlCodeGetField(
+                printer->unk2E = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
 
@@ -227,7 +208,7 @@ RenderResult RenderText(TextPrinter *printer) {
             } break;
 
             case 0xFF01:
-                field = (u16)MsgArray_ControlCodeGetField(
+                field = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
 
                 switch (field) {
@@ -244,7 +225,7 @@ RenderResult RenderText(TextPrinter *printer) {
                 break;
 
             case 0xFE06:
-                field = (u16)MsgArray_ControlCodeGetField(
+                field = MsgArray_ControlCodeGetField(
                     printer->template.currentChar.raw, 0);
                 if (field != 0xFE00) {
                     if (field != 0xFE01) {
@@ -252,7 +233,7 @@ RenderResult RenderText(TextPrinter *printer) {
                     }
 
                     printer->state = 2;
-                    TextPrinterInitDownArrowCounters(printer);
+                    TextPrinter_InitDownArrowCounters(printer);
                     printer->template.currentChar.raw = MsgArray_SkipControlCode(
                         printer->template.currentChar.raw);
 
@@ -260,7 +241,7 @@ RenderResult RenderText(TextPrinter *printer) {
                 }
 
                 printer->state = 3;
-                TextPrinterInitDownArrowCounters(printer);
+                TextPrinter_InitDownArrowCounters(printer);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
 
                 return RENDER_UPDATE;
@@ -271,12 +252,12 @@ RenderResult RenderText(TextPrinter *printer) {
 
         case 0x25BC:
             printer->state = 2;
-            TextPrinterInitDownArrowCounters(printer);
+            TextPrinter_InitDownArrowCounters(printer);
             return RENDER_UPDATE;
 
         case 0x25BD:
             printer->state = 3;
-            TextPrinterInitDownArrowCounters(printer);
+            TextPrinter_InitDownArrowCounters(printer);
             return RENDER_UPDATE;
         }
 
@@ -293,16 +274,16 @@ RenderResult RenderText(TextPrinter *printer) {
 
         return RENDER_PRINT;
     case 1:
-        if (TextPrinterWait(printer) != 0) {
-            TextPrinterClearDownArrow(printer);
+        if (TextPrinter_Wait(printer) != 0) {
+            TextPrinter_ClearDownArrow(printer);
 
             printer->state = 0;
         }
 
         return RENDER_UPDATE;
     case 2:
-        if (TextPrinterWaitWithDownArrow(printer) != 0) {
-            TextPrinterClearDownArrow(printer);
+        if (TextPrinter_WaitWithDownArrow(printer) != 0) {
+            TextPrinter_ClearDownArrow(printer);
             FillWindowPixelBuffer(
                 printer->template.window, printer->template.bgColor);
             printer->template.currentX = printer->template.x;
@@ -312,9 +293,9 @@ RenderResult RenderText(TextPrinter *printer) {
 
         return RENDER_UPDATE;
     case 3:
-        if (TextPrinterWaitWithDownArrow(printer) != 0) {
-            TextPrinterClearDownArrow(printer);
-            printer->scrollDistance    = (u8)(GetFontAttribute(printer->template.fontId, 1) + printer->template.lineSpacing);
+        if (TextPrinter_WaitWithDownArrow(printer) != 0) {
+            TextPrinter_ClearDownArrow(printer);
+            printer->scrollDistance    = (GetFontAttribute(printer->template.fontId, 1) + printer->template.lineSpacing);
             printer->template.currentX = printer->template.x;
             printer->state             = 4;
         }
@@ -326,13 +307,13 @@ RenderResult RenderText(TextPrinter *printer) {
                 ScrollWindow(printer->template.window,
                     0,
                     printer->scrollDistance,
-                    (u8)(printer->template.bgColor | (printer->template.bgColor << 4)));
+                    (printer->template.bgColor | (printer->template.bgColor << 4)));
                 printer->scrollDistance = 0;
             } else {
                 ScrollWindow(printer->template.window,
                     0,
                     4,
-                    (u8)(printer->template.bgColor | (printer->template.bgColor << 4)));
+                    (printer->template.bgColor | (printer->template.bgColor << 4)));
 
                 printer->scrollDistance -= 4;
             }
@@ -356,8 +337,8 @@ RenderResult RenderText(TextPrinter *printer) {
         return RENDER_UPDATE;
 
     case 7:
-        if (TextPrinterWaitWithDownArrow(printer)) {
-            TextPrinterClearDownArrow(printer);
+        if (TextPrinter_WaitWithDownArrow(printer)) {
+            TextPrinter_ClearDownArrow(printer);
             FillWindowPixelBuffer(printer->template.window, printer->template.bgColor);
             printer->template.currentX = printer->template.x;
             printer->template.currentY = printer->template.y;
@@ -365,8 +346,8 @@ RenderResult RenderText(TextPrinter *printer) {
         }
         return RENDER_UPDATE;
     case 8:
-        if (TextPrinterWaitWithDownArrow(printer)) {
-            TextPrinterClearDownArrow(printer);
+        if (TextPrinter_WaitWithDownArrow(printer)) {
+            TextPrinter_ClearDownArrow(printer);
             printer->scrollDistance    = printer->template.lineSpacing + GetFontAttribute(printer->template.fontId, 1);
             printer->template.currentX = printer->template.x;
             printer->state             = 4;
@@ -377,11 +358,11 @@ RenderResult RenderText(TextPrinter *printer) {
     return RENDER_FINISH;
 }
 
-void sub_020027F0(int flag) {
-    unk00 = flag;
+void TextPrinter_SetDownArrowBaseTile(int tile) {
+    sDownArrowBaseTile = tile;
 }
 
-static void TextPrinterInitDownArrowCounters(TextPrinter *printer) {
+static void TextPrinter_InitDownArrowCounters(TextPrinter *printer) {
     TextPrinterSubStruct *subStruct = (TextPrinterSubStruct *)(&printer->subStructFields);
 
     if (sTextFlags.autoScroll) {
@@ -390,10 +371,10 @@ static void TextPrinterInitDownArrowCounters(TextPrinter *printer) {
         subStruct->downArrowYPosIdx = 0;
         subStruct->downArrowDelay   = 0;
     }
-    sub_0200EB68(printer->template.window, unk00);
+    sub_0200EB68(printer->template.window, sDownArrowBaseTile);
 }
 
-static void TextPrinterDrawDownArrow(TextPrinter *printer) {
+static void TextPrinter_DrawDownArrow(TextPrinter *printer) {
     TextPrinterSubStruct *subStruct = (TextPrinterSubStruct *)(&printer->subStructFields);
 
     if (sTextFlags.autoScroll || sTextFlags.useAlternateDownArrow) {
@@ -410,38 +391,43 @@ static void TextPrinterDrawDownArrow(TextPrinter *printer) {
     u8 y      = GetWindowY(printer->template.window);
     u8 width  = GetWindowWidth(printer->template.window);
     u8 height = GetWindowHeight(printer->template.window) - 2;
-    u16 r6    = unk00;
+    u16 r6    = sDownArrowBaseTile;
+
+    int tileOffset = subStruct->downArrowYPosIdx % 4;
+    if (tileOffset == 3) {
+        tileOffset = 1;
+    }
 
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 18 + _020F56BC[subStruct->downArrowYPosIdx] * 4),
-        (u8)(x + width + 1),
-        (u8)(y + height),
+        (r6 + 18 + tileOffset * 4),
+        (x + width + 1),
+        (y + height),
         1,
         1,
         0x10);
 
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 19 + _020F56BC[subStruct->downArrowYPosIdx] * 4),
-        (u8)(x + width + 2),
-        (u8)(y + height),
+        (r6 + 19 + tileOffset * 4),
+        (x + width + 2),
+        (y + height),
         1,
         1,
         0x10);
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 20 + _020F56BC[subStruct->downArrowYPosIdx] * 4),
-        (u8)(x + width + 1),
-        (u8)(y + height + 1),
+        (r6 + 20 + tileOffset * 4),
+        (x + width + 1),
+        (y + height + 1),
         1,
         1,
         0x10);
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 21 + _020F56BC[subStruct->downArrowYPosIdx] * 4),
-        (u8)(x + width + 2),
-        (u8)(y + height + 1),
+        (r6 + 21 + tileOffset * 4),
+        (x + width + 2),
+        (y + height + 1),
         1,
         1,
         0x10);
@@ -451,7 +437,7 @@ static void TextPrinterDrawDownArrow(TextPrinter *printer) {
     subStruct->downArrowYPosIdx++;
 }
 
-static void TextPrinterClearDownArrow(TextPrinter *printer) {
+static void TextPrinter_ClearDownArrow(TextPrinter *printer) {
     if (sTextFlags.useAlternateDownArrow) {
         return;
     }
@@ -461,35 +447,35 @@ static void TextPrinterClearDownArrow(TextPrinter *printer) {
     u8 y      = GetWindowY(printer->template.window);
     u8 width  = GetWindowWidth(printer->template.window);
     u8 height = GetWindowHeight(printer->template.window) - 2;
-    u16 r6    = unk00;
+    u16 r6    = sDownArrowBaseTile;
 
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 10),
-        (u8)(x + width + 1),
-        (u8)(y + height),
+        (r6 + 10),
+        (x + width + 1),
+        (y + height),
         1,
         2,
         0x10);
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (u16)(r6 + 11),
-        (u8)(x + width + 2),
-        (u8)(y + height),
+        (r6 + 11),
+        (x + width + 2),
+        (y + height),
         1,
         2,
         0x10);
     BgCommitTilemapBufferToVram(printer->template.window->bgConfig, bg_id);
 }
 
-static BOOL TextPrinterContinue(TextPrinter *printer) {
+static BOOL TextPrinter_Continue(TextPrinter *printer) {
 #pragma unused(printer)
     // Speedchoice change
     TextPrinterSubStruct *subStruct = (TextPrinterSubStruct *)printer->subStructFields;
-    if (sub_02002220() || (sTextFlags.holdToMash && sub_020021A0(subStruct))) {
+    if (TextPrinter_ContinueInputNew() || (sTextFlags.holdToMash && TextPrinter_ContinueInputHeld(subStruct))) {
         PlaySE(SEQ_SE_DP_SELECT);
 
-        sTextFlags.unk0_7 = 1;
+        sTextFlags.hasContinuedInput = 1;
 
         return TRUE;
     }
@@ -497,7 +483,7 @@ static BOOL TextPrinterContinue(TextPrinter *printer) {
     return FALSE;
 }
 
-static BOOL TextPrinterWaitAutoMode(TextPrinter *printer) {
+static BOOL TextPrinter_WaitAutoMode(TextPrinter *printer) {
     TextPrinterSubStruct *subStruct = (TextPrinterSubStruct *)(&printer->subStructFields);
 
     if (subStruct->autoScrollDelay == 100) {
@@ -505,100 +491,100 @@ static BOOL TextPrinterWaitAutoMode(TextPrinter *printer) {
     }
 
     subStruct->autoScrollDelay++;
-    if (sTextFlags.unk0_5) {
-        return TextPrinterContinue(printer);
+    if (sTextFlags.autoScrollCanSpeedUp) {
+        return TextPrinter_Continue(printer);
     }
 
     return FALSE;
 }
 
-static BOOL TextPrinterWaitWithDownArrow(TextPrinter *printer) {
+static BOOL TextPrinter_WaitWithDownArrow(TextPrinter *printer) {
     if (sTextFlags.autoScroll) {
-        return TextPrinterWaitAutoMode(printer);
+        return TextPrinter_WaitAutoMode(printer);
     }
-    TextPrinterDrawDownArrow(printer);
+    TextPrinter_DrawDownArrow(printer);
 
-    return TextPrinterContinue(printer);
+    return TextPrinter_Continue(printer);
 }
 
-static u8 TextPrinterWait(TextPrinter *printer) {
+static u8 TextPrinter_Wait(TextPrinter *printer) {
     if (sTextFlags.autoScroll) {
-        return (u8)TextPrinterWaitAutoMode(printer);
+        return TextPrinter_WaitAutoMode(printer);
     }
 
-    return (u8)TextPrinterContinue(printer);
+    return TextPrinter_Continue(printer);
 }
 
 void TextFlags_SetCanABSpeedUpPrint(BOOL param0) {
     sTextFlags.canABSpeedUpPrint = param0;
 }
 
-void sub_02002B50(int param0) {
-    sTextFlags.autoScroll = param0 & 1;
-    sTextFlags.unk0_5     = (param0 >> 1) & 1;
+void TextFlags_SetAutoScrollParam(int param0) {
+    sTextFlags.autoScroll           = param0 & 1;
+    sTextFlags.autoScrollCanSpeedUp = (param0 >> 1) & 1;
 }
 
-void sub_02002B8C(BOOL enable) {
-    sTextFlags.unk0_4 = enable;
+void TextFlags_SetCanTouchSpeedUpPrint(BOOL enable) {
+    sTextFlags.canTouchSpeedUpPrint = enable;
 }
 
-void sub_02002BA8(BOOL enable) {
+void TextFlags_SetAlternateDownArrow(BOOL enable) {
     sTextFlags.useAlternateDownArrow = enable;
 }
 
-u8 sub_02002BC4(void) {
-    return sTextFlags.unk0_6;
+u8 TextFlags_GetHasSpedUpInput(void) {
+    return sTextFlags.hasSpedUpInput;
 }
 
-void sub_02002BD4(void) {
-    sTextFlags.unk0_6 = 0;
+void TextFlags_ResetHasSpedUpInput(void) {
+    sTextFlags.hasSpedUpInput = 0;
 }
 
-u8 sub_02002BE4(void) {
-    return sTextFlags.unk0_7;
+u8 TextFlags_GetHasContinuedInput(void) {
+    return sTextFlags.hasContinuedInput;
 }
 
-void sub_02002BF4(void) {
-    sTextFlags.unk0_7 = 0;
+void TextFlags_ResetHasContinuedInput(void) {
+    sTextFlags.hasContinuedInput = 0;
 }
 
-BOOL sub_02002C04(void) {
-    if (sTextFlags.unk0_4) {
-        return sTextFlags.unk1_0;
+BOOL TextFlags_GetIsTouchSpeedingUpPrint(void) {
+    if (sTextFlags.canTouchSpeedUpPrint) {
+        return sTextFlags.touchIsSpeedingUpPrint;
     } else {
         return FALSE;
     }
 }
 
 void sub_02002C20(const TouchscreenHitbox *hitbox) {
-    sTextFlags.unk1_1  = TRUE;
-    sTouchScreenHitbox = *hitbox;
+    sTextFlags.touchHitboxActive = TRUE;
+    sTouchScreenHitbox           = *hitbox;
 }
 
 void sub_02002C40(void) {
-    sTextFlags.unk1_1              = FALSE;
+    sTextFlags.touchHitboxActive   = FALSE;
     sTouchScreenHitbox.rect.top    = 0;
     sTouchScreenHitbox.rect.bottom = 192;
     sTouchScreenHitbox.rect.left   = 0;
     sTouchScreenHitbox.rect.right  = 255;
 }
 
-void sub_02002C60(BOOL a0) {
-    if (a0 == FALSE) {
+void TextFlags_BeginAutoScroll(BOOL noSpeedUp) {
+    if (noSpeedUp == FALSE) {
         TextFlags_SetCanABSpeedUpPrint(TRUE);
-        sub_02002B50(3);
-        sub_02002B8C(TRUE);
+        TextFlags_SetAutoScrollParam(3);
+        TextFlags_SetCanTouchSpeedUpPrint(TRUE);
     } else {
-        sub_02002B50(1);
+        TextFlags_SetAutoScrollParam(1);
         TextFlags_SetCanABSpeedUpPrint(FALSE);
-        sub_02002B8C(FALSE);
+        TextFlags_SetCanTouchSpeedUpPrint(FALSE);
     }
 }
 
-void sub_02002C90(void) {
+void TextFlags_EndAutoScroll(void) {
     TextFlags_SetCanABSpeedUpPrint(FALSE);
-    sub_02002B50(0);
-    sub_02002B8C(FALSE);
+    TextFlags_SetAutoScrollParam(0);
+    TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 }
 
 // Speedchoice change
