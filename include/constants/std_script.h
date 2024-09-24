@@ -47,6 +47,7 @@
 #define std_play_clair_music           2044
 #define std_fade_end_clair_music       2045
 #define std_enter_global_terminal      2046
+#define std_phone_call_mem             2047
 #define std_pokemart                   2048
 #define std_pokemart_buy               2049
 #define std_pokemart_sell              2050

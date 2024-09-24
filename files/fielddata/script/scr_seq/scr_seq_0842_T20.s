@@ -53,12 +53,16 @@ scr_seq_T20_009:
 	end
 
 _00A4:
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	clearflag FLAG_HIDE_NEW_BARK_FRIEND
 	show_person obj_T20_var_1
 	clearflag FLAG_HIDE_NEW_BARK_MARILL
 	show_person obj_T20_tsure_poke_static_marill
 	move_person_facing obj_T20_var_1, 686, 0, 396, DIR_WEST
 	move_person_facing obj_T20_tsure_poke_static_marill, 685, 0, 396, DIR_SOUTH
+.friendless:
 	end
 
 scr_seq_T20_000:
@@ -1066,6 +1070,9 @@ _0D70:
 scr_seq_T20_003:
 	scrcmd_609
 	lockall
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_2
 	release obj_T20_tsure_poke_static_marill
 	apply_movement obj_T20_tsure_poke_static_marill, _0E08
 	wait_movement
@@ -1087,9 +1094,10 @@ scr_seq_T20_003:
 	apply_movement obj_T20_tsure_poke_static_marill, _0E68
 	wait_movement
 	callstd std_fade_end_friend_music
-	setvar VAR_SCENE_PLAYERS_HOUSE_1F, 2
 	hide_person obj_T20_tsure_poke_static_marill
 	hide_person obj_T20_var_1
+.friendless_2:
+	setvar VAR_SCENE_PLAYERS_HOUSE_1F, 2
 	setflag FLAG_HIDE_NEW_BARK_MARILL
 	setflag FLAG_HIDE_NEW_BARK_FRIEND
 	releaseall
@@ -1185,6 +1193,9 @@ scr_seq_T20_007:
 scr_seq_T20_008:
 	scrcmd_609
 	lockall
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_3
 	callstd std_play_friend_music
 	apply_movement obj_T20_var_1, _0F84
 	apply_movement obj_T20_tsure_poke_static_marill, _0FBC
@@ -1211,6 +1222,7 @@ scr_seq_T20_008:
 	wait_movement
 	hide_person obj_T20_tsure_poke_static_marill
 	hide_person obj_T20_var_1
+.friendless_3:
 	setflag FLAG_HIDE_NEW_BARK_MARILL
 	setflag FLAG_HIDE_NEW_BARK_FRIEND
 	callstd std_fade_end_friend_music
@@ -1669,6 +1681,9 @@ _1508:
 scr_seq_T20_012:
 	scrcmd_609
 	lockall
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_4
 	apply_movement obj_T20_var_1_2, _1644
 	wait_movement
 	buffer_players_name 0
@@ -1739,6 +1754,7 @@ _1634:
 	apply_movement obj_T20_var_1_2, _16A0
 _163C:
 	wait_movement
+.friendless_4:
 	releaseall
 	end
 
@@ -1814,6 +1830,9 @@ scr_seq_T20_004:
 	end
 
 scr_seq_T20_005:
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_5
 	play_se SEQ_SE_DP_SELECT
 	lockall
 	faceplayer
@@ -1828,6 +1847,7 @@ scr_seq_T20_005:
 	gender_msgbox msg_0542_T20_00031, msg_0542_T20_00032
 	wait_button_or_walk_away
 	closemsg
+.friendless_5:
 	releaseall
 	end
 

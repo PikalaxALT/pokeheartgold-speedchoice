@@ -1214,7 +1214,8 @@ Overlay OVY_124
 }
 Overlay OVY_125
 {
-    After OVY_123
+    After OVY_53
+    Object src/speedchoice_options.o
 }
 Overlay OVY_126
 {

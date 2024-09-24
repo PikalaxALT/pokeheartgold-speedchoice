@@ -12470,6 +12470,8 @@ _021ED7E4:
 	bx lr
 	thumb_func_end ov101_021ED7D8
 
+	// File boundary?
+
 	thumb_func_start TownMap_Init
 TownMap_Init: ; 0x021ED7F8
 	push {r3, r4, r5, lr}
@@ -14530,6 +14532,8 @@ _021EE8E0: .word ov101_021EB2FC
 _021EE8E4: .word 0x00030100
 	thumb_func_end ov101_021EE670
 
+	// File boundary?
+
 	thumb_func_start ov101_021EE8E8
 ov101_021EE8E8: ; 0x021EE8E8
 	push {r3, r4, r5, lr}
@@ -16529,6 +16533,8 @@ _021EF840: .word ov101_021F83E4
 _021EF844: .word 0x00000941
 	thumb_func_end ov101_021EF7D4
 
+	// File boundary?
+
 	thumb_func_start ov101_021EF848
 ov101_021EF848: ; 0x021EF848
 	push {r3, r4, r5, lr}
@@ -17595,7 +17601,7 @@ _021F0026:
 	mov r0, #1
 	bl TextFlags_SetCanTouchSpeedUpPrint
 	ldr r0, _021F0038 ; =ov101_021F8400
-	bl sub_02002C20
+	bl TextFlags_SetFastForwardTouchButtonHitbox
 	add r0, r4, #0
 	pop {r3, r4, r5, pc}
 	nop
@@ -17621,7 +17627,7 @@ ov101_021F003C: ; 0x021F003C
 	bl CopyWindowToVram
 	mov r0, #0
 	bl TextFlags_SetCanTouchSpeedUpPrint
-	bl sub_02002C40
+	bl TextFlags_UnsetFastForwardTouchButtonHitbox
 	add r0, r4, #0
 	mov r1, #0
 	bl ov101_021F0464
@@ -21427,6 +21433,7 @@ _021F1D6E:
 _021F1D70: .word 0x00000404
 	thumb_func_end ov101_021F1D44
 
+	// Gendered phone call?
 	thumb_func_start ov101_021F1D74
 ov101_021F1D74: ; 0x021F1D74
 	push {r4, r5, r6, lr}
@@ -21954,6 +21961,9 @@ _021F219C: .word ov101_021F8400
 
 	thumb_func_start PhoneCallMessagePrint
 PhoneCallMessagePrint: ; 0x021F21A0
+	// r0: PhoneCallData
+	// r1: MsgData
+	// r2: MsgIDs
 	push {r4, lr}
 	sub sp, #0x10
 	add r4, r0, #0
@@ -26613,6 +26623,8 @@ _021F4474: .word 0x000009A5
 _021F4478: .word 0x0000096A
 _021F447C: .word 0x0000099F
 	thumb_func_end ov101_021F42E4
+
+	// File boundary?
 
 	thumb_func_start ov101_021F4480
 ov101_021F4480: ; 0x021F4480

@@ -25,6 +25,8 @@
 #include "constants/trainers.h"
 #include "constants/vars.h"
 
+#include "config.h"
+
 #define lt 0
 #define eq 1
 #define gt 2

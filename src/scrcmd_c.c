@@ -882,7 +882,7 @@ BOOL ScrCmd_TrainerTips(ScriptContext *ctx) {
     StringExpandPlaceholders(*msg_fmt, *unk, *tmp_str);
 
     TextFlags_SetCanABSpeedUpPrint(TRUE);
-    TextFlags_SetAutoScrollParam(FALSE);
+    TextFlags_SetAutoScrollParam(AUTO_SCROLL_OFF);
     TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 
     Window *window  = ov01_021F3D80(fieldSystem->unk68);
@@ -4678,13 +4678,13 @@ BOOL ScrCmd_CheckRegisteredPhoneNumber(ScriptContext *ctx) {
 }
 
 BOOL ScrCmd_SetPhoneCall(ScriptContext *ctx) {
-    u16 r4        = ScriptGetVar(ctx);
+    u16 callerId  = ScriptGetVar(ctx);
     u16 r6        = ScriptGetVar(ctx);
     u16 r7        = ScriptGetVar(ctx);
     void **p_work = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA); // PhoneCallAppData
     sub_02092DF4(FieldSystem_GetGearPhoneRingManager(ctx->fieldSystem));
     ctx->fieldSystem->unkD2_7 = TRUE;
-    ov02_02251EB8(FieldSystem_GetGearPhoneRingManager(ctx->fieldSystem), r4, 0xFF, 0, r6, r7);
+    ov02_02251EB8(FieldSystem_GetGearPhoneRingManager(ctx->fieldSystem), callerId, 0xFF, 0, r6, r7);
     return TRUE;
 }
 
@@ -4704,29 +4704,29 @@ BOOL ScrCmd_LoadPhoneDat(ScriptContext *ctx) {
 
 BOOL ScrCmd_GetPhoneContactMsgIds(ScriptContext *ctx) {
     u16 *p_scriptno       = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_ACTIVE_SCRIPT_NUMBER);
-    u8 r6                 = ScriptReadByte(ctx);
-    u16 *sp0              = ScriptGetVarPointer(ctx);
+    u8 rematchNum         = ScriptReadByte(ctx);
+    u16 *p_ret_gmm        = ScriptGetVarPointer(ctx);
     u16 *p_ret_msg        = ScriptGetVarPointer(ctx);
     PhoneBookEntry *entry = sub_02092E10(FieldSystem_GetGearPhoneRingManager(ctx->fieldSystem));
-    *sp0                  = GetPhoneMessageGmm(entry->unk0);
-    u16 r5, p_ret_gmm;
+    *p_ret_gmm            = GetPhoneMessageGmm(entry->unk0);
+    u16 msgNum, trainerNum;
 
     if (entry->unk0 == 0xFF) {
         *p_ret_msg = 0;
         return TRUE;
     }
-    if (r6 > 4) {
-        r6 = 0;
+    if (rematchNum > 4) {
+        rematchNum = 0;
     }
-    p_ret_gmm = ScriptNumToTrainerNum(*p_scriptno);
-    r5        = r6 + 1;
-    if (p_ret_gmm >= LAST_TRAINER_INDEX) {
-        *p_ret_msg = r5;
+    trainerNum = ScriptNumToTrainerNum(*p_scriptno);
+    msgNum     = rematchNum + 1;
+    if (trainerNum >= LAST_TRAINER_INDEX) {
+        *p_ret_msg = msgNum;
     } else if ((u16)TrainerNumIsDouble(ScriptNumToTrainerNum(*p_scriptno)) == FALSE) {
-        *p_ret_msg = r5;
+        *p_ret_msg = msgNum;
     } else {
         ScriptNoToDoublePartnerNo(*p_scriptno);
-        *p_ret_msg = r5;
+        *p_ret_msg = msgNum;
     }
     return FALSE;
 }

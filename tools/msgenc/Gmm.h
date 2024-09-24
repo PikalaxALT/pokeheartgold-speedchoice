@@ -1,7 +1,6 @@
 #ifndef GUARD_GMM_H
 #define GUARD_GMM_H
 
-
 // The GMM format is a slimmed-down variant of GameFreak's GMM file.
 // It is essentially an XML file by another name.
 // Within the body, each row encodes the text of a message as well
@@ -12,16 +11,18 @@
 // length of the corresponding Japanese message. Such strings are
 // labeled with the window context "garbage".
 
+#include <cstring>
+#include <fstream>
 #include <string>
 #include <vector>
-#include <fstream>
-#include <cstring>
-#include "pugixml.hpp"
+
 #include "MessagesConverter.h"
 
+#include "pugixml.hpp"
+
 class GMM {
-    static const int _row_no_buf_ndigit = 5;
-    char row_no_buf[_row_no_buf_ndigit + 1] = {0};
+    static const int _row_no_buf_ndigit     = 5;
+    char row_no_buf[_row_no_buf_ndigit + 1] = { 0 };
     string filename;
     fstream stream;
     pugi::xml_document doc;
@@ -42,8 +43,11 @@ class GMM {
             }
         }
     }
+
 public:
-    GMM(string &_filename, ios::openmode _openmode) : filename(_filename), stream(_filename, _openmode) {
+    GMM(string &_filename, ios::openmode _openmode)
+        : filename(_filename)
+        , stream(_filename, _openmode) {
         memset(row_no_buf, '0', _row_no_buf_ndigit);
     }
     void FromFile(MessagesConverter &converter);
@@ -53,5 +57,4 @@ private:
     vector<string> SplitMessage(const string &message);
 };
 
-
-#endif //GUARD_GMM_H
+#endif // GUARD_GMM_H

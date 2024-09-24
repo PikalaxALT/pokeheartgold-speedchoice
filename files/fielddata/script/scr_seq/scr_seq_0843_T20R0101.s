@@ -519,7 +519,7 @@ _06D4:
 	buffer_players_name 0
 	gender_msgbox msg_0543_T20R0101_00019, msg_0543_T20R0101_00020
 	goto_if_no_item_space ITEM_POTION, 5, _0805
-	setvar VAR_SPECIAL_x8004, 17
+	setvar VAR_SPECIAL_x8004, ITEM_POTION
 	setvar VAR_SPECIAL_x8005, 5
 	callstd std_obtain_item_verbose
 	closemsg
@@ -674,6 +674,9 @@ scr_seq_T20R0101_002:
 	apply_movement obj_T20R0101_policeman, _0A7C
 	wait_movement
 	npc_msg msg_0543_T20R0101_00023
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	closemsg
 	clearflag FLAG_HIDE_ELMS_LAB_FRIEND
 	play_se SEQ_SE_DP_KAIDAN2
@@ -690,6 +693,12 @@ scr_seq_T20R0101_002:
 	npc_msg msg_0543_T20R0101_00026
 	closemsg
 	callstd std_fade_end_friend_music
+	goto _0904
+
+.friendless:
+	wait_button
+	npc_msg msg_0543_T20R0101_00026
+	closemsg
 _0904:
 	fade_screen 6, 1, 0, RGB_BLACK
 	wait_fade
@@ -710,12 +719,19 @@ _0904:
 	closemsg
 	npc_msg msg_0543_T20R0101_00028
 	closemsg
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_2
 	apply_movement obj_T20R0101_var_1, _0AEC
+.friendless_2:
 	apply_movement obj_T20R0101_policeman, _0ABC
 	wait_movement
 	play_se SEQ_SE_DP_KAIDAN2
 	hide_person obj_T20R0101_policeman
 	wait_se SEQ_SE_DP_KAIDAN2
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_3
 	apply_movement obj_T20R0101_var_1, _0B08
 	wait_movement
 	buffer_players_name 0
@@ -727,6 +743,7 @@ _0904:
 	play_se SEQ_SE_DP_KAIDAN2
 	hide_person obj_T20R0101_var_1
 	wait_se SEQ_SE_DP_KAIDAN2
+.friendless_3:
 	setflag FLAG_HIDE_ELMS_LAB_OFFICER
 	setflag FLAG_HIDE_ELMS_LAB_FRIEND
 	setflag FLAG_UNK_079
@@ -887,6 +904,9 @@ _0B64:
 scr_seq_T20R0101_014:
 	scrcmd_609
 	lockall
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_4
 	apply_movement obj_T20R0101_var_1, _0C78
 	wait_movement
 	apply_movement obj_T20R0101_var_1, _0C84
@@ -894,11 +914,16 @@ scr_seq_T20R0101_014:
 	buffer_players_name 0
 	gender_msgbox msg_0543_T20R0101_00058, msg_0543_T20R0101_00059
 	closemsg
+.friendless_4:
 	toggle_following_pokemon_movement 0
 	wait_following_pokemon_movement
 	following_pokemon_movement 55
 	apply_movement obj_player, _0CA4
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_5
 	apply_movement obj_T20R0101_var_1, _0C90
+.friendless_5:
 	wait_movement
 	wait_following_pokemon_movement
 	toggle_following_pokemon_movement 1
@@ -907,7 +932,7 @@ scr_seq_T20R0101_014:
 	wait_movement
 	buffer_players_name 0
 	gender_msgbox msg_0543_T20R0101_00060, msg_0543_T20R0101_00061
-	setvar VAR_SPECIAL_x8004, 1
+	setvar VAR_SPECIAL_x8004, ITEM_MASTER_BALL
 	setvar VAR_SPECIAL_x8005, 1
 	hasspaceforitem VAR_SPECIAL_x8004, VAR_SPECIAL_x8005, VAR_SPECIAL_RESULT
 	compare VAR_SPECIAL_RESULT, 0
@@ -923,6 +948,9 @@ _0BF3:
 	buffer_players_name 0
 	gender_msgbox msg_0543_T20R0101_00064, msg_0543_T20R0101_00065
 	closemsg
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_6
 	apply_movement obj_T20R0101_var_1, _0CAC
 	apply_movement obj_player, _0CB8
 	wait_movement
@@ -935,6 +963,7 @@ _0BF3:
 	setflag FLAG_HIDE_ELMS_LAB_FRIEND
 	play_se SEQ_SE_DP_KAIDAN2
 	wait_se SEQ_SE_DP_KAIDAN2
+.friendless_6:
 	apply_movement obj_T20R0101_doctor, _0B2C
 	apply_movement obj_player, _0CD4
 	wait_movement

@@ -95,9 +95,23 @@ u16string MessagesEncoder::EncodeMessage(const string & message, int & i) {
                 } catch (out_of_range& oor) { /* silently discard */}
             }
             if (code == 0 && substr != "\\x0000") {
-                stringstream ss;
-                ss << "unrecognized character in " << textfilename << ": line " << i << " pos " << (j + 1) << " value " << substr;
-                throw runtime_error(ss.str());
+                int offset = GetGmmLineNos()[i - 1] + j + 1;
+                int lineno;
+                for (lineno = 0; lineno < GetGmmLineOffsets().size() - 1; ++lineno) {
+                    if (offset >= GetGmmLineOffsets()[lineno] && offset < GetGmmLineOffsets()[lineno + 1]) {
+                        break;
+                    }
+                }
+                int linepos = offset - GetGmmLineOffsets()[lineno];
+                ++lineno;
+                if (message[j] == '\'') {
+                    code = charmap.at("’");
+                    cerr << "warning: unsupported normal apostrophe at " << textfilename << ":" << lineno << ":" << linepos << ", using smart apostrophe (’) instead\n";
+                } else {
+                    stringstream ss;
+                    ss << "unrecognized character in " << textfilename << ":" << lineno << ":" << linepos << ", remaining buffer: " << substr;
+                    throw runtime_error(ss.str());
+                }
             }
             debug_printf("%04X ", code);
             if (is_trname) {

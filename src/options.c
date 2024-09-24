@@ -20,8 +20,8 @@ void Options_Init(Options *options) {
 
     options->textSpeed   = 1; // mid speed
     options->soundMethod = 0; // stereo
-    options->battleStyle = 0; // shift
-    options->battleScene = 0; // on
+    options->battleStyle = 1; // set
+    options->battleScene = 1; // off
     options->buttonMode  = 0; // normal
     options->frame       = 0; // frame 1
 }

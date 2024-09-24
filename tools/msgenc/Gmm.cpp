@@ -70,17 +70,25 @@ void GMM::WriteGmmHeader(const string &_filename) {
 
 // Reads messages from GMM into memory to be converted
 void GMM::FromFile(MessagesConverter &converter) {
+    {
+        string line;
+        do {
+            converter.GetGmmLineOffsets().emplace_back(stream.tellg());
+        } while (getline(stream, line));
+        stream.clear();
+        stream.seekg(0);
+    }
     pugi::xml_parse_result result = doc.load(stream);
     if (!result) {
         throw runtime_error(result.description());
     }
-    const auto &node = doc.find_child([](const auto &n) {
+    const auto &node    = doc.find_child([](const auto &n) {
         return strcmp(n.name(), "body") == 0;
     });
-    int i = 0;
     string rowname_pref = filename.substr(filename.find_last_of('/') + 1).substr(0, filename.find_first_of('.'));
     for (const auto &subnode : node.children()) {
         if (strcmp(subnode.name(), "row") == 0) {
+            // Get the actual message body
             const auto &language = subnode.find_child([](const auto &n) {
                 return strcmp(n.name(), "language") == 0 && strcmp(n.attribute("name").value(), LANGUAGE) == 0;
             });
@@ -97,13 +105,13 @@ void GMM::FromFile(MessagesConverter &converter) {
                 fill(message.begin(), message.end(), ' ');
             }
             converter.GetDecodedMessages().emplace_back(message);
+            converter.GetGmmLineNos().emplace_back(language.first_child().offset_debug());
             string row_id(subnode.attribute("id").value());
             if (row_id.empty()) {
                 row_id = rowname_pref + '_' + row_no_buf;
             }
             id_strings.emplace_back(row_id);
             messages.emplace_back(message);
-            i++;
             IncRowNoBuf();
         }
     }

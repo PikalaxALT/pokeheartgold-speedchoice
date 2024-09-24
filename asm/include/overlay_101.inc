@@ -5,8 +5,8 @@
 .public TextFlags_SetCanTouchSpeedUpPrint
 .public TextFlags_SetAlternateDownArrow
 .public TextFlags_GetIsTouchSpeedingUpPrint
-.public sub_02002C20
-.public sub_02002C40
+.public TextFlags_SetFastForwardTouchButtonHitbox
+.public TextFlags_UnsetFastForwardTouchButtonHitbox
 .public FontID_Alloc
 .public FontID_Release
 .public FontID_String_GetWidth

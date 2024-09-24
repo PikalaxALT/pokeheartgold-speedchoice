@@ -31,7 +31,9 @@ static inline void usage() {
 }
 
 int do_main(MessagesConverter* &converter, int argc, char ** argv) {
+#ifdef NDEBUG
     try {
+#endif
         Options options(argc, argv);
         if (options.printUsage || !options.failReason.empty()) {
             usage();
@@ -59,6 +61,7 @@ int do_main(MessagesConverter* &converter, int argc, char ** argv) {
         if (options.mode == CONV_DECODE) {
             cout << "Key: " << hex << converter->GetKey() << endl;
         }
+#ifdef NDEBUG
     } catch (invalid_argument& ia) {
         cerr << "Invalid Argument: " << ia.what() << endl;
         return 1;
@@ -69,6 +72,7 @@ int do_main(MessagesConverter* &converter, int argc, char ** argv) {
         cerr << "Runtime Error: " << exc.what() << endl;
         return 1;
     }
+#endif
     return 0;
 }
 

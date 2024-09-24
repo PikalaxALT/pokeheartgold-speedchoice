@@ -11,8 +11,8 @@
 .public TextFlags_GetHasContinuedInput
 .public TextFlags_ResetHasContinuedInput
 .public TextFlags_GetIsTouchSpeedingUpPrint
-.public sub_02002C20
-.public sub_02002C40
+.public TextFlags_SetFastForwardTouchButtonHitbox
+.public TextFlags_UnsetFastForwardTouchButtonHitbox
 .public TextFlags_BeginAutoScroll
 .public TextFlags_EndAutoScroll
 .public FontID_TryLoadGlyph

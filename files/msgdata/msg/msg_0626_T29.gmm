@@ -152,4 +152,12 @@
 		<attribute name="window_context_name">used</attribute>
 		<language name="English">Obtained the {STRVAR_1 8, 0, 0}!\rToo bad!\nThe Bag is full...</language>
 	</row>
+	<row id="msg_0626_T29_lance_ask_take_junk" index="36">
+		<attribute name="window_context_name">used</attribute>
+		<language name="English">Did you come here because of the\nwild tales?\rYou’re {STRVAR_1 3, 0, 0}?\nI’m Lance, a Trainer like you.\rI heard some rumblings, so I came to\ninvestigate...\rI saw the way you battled earlier,\n{STRVAR_1 3, 0, 0}.\rI can tell that you’re a Trainer\nwith considerable skill.\rIf you don’t mind, could you take this\njunk away? {YESNO 0}</language>
+	</row>
+	<row id="msg_0626_T29_lance_take_junk_yes" index="37">
+		<attribute name="window_context_name">used</attribute>
+		<language name="English">Lance: Excellent!\rI found all this around town,\nbut I have no use for it at all.\rTake it off my hands, please!</language>
+	</row>
 </body>

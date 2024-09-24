@@ -945,7 +945,7 @@ static BOOL OakSpeech_PrintDialogMsg(OakSpeechData *data, int msgNum, int waitBu
         DrawFrameAndWindow2(&data->dialogWindow, FALSE, 0x3E2, 4);
 
         TextFlags_SetCanABSpeedUpPrint(TRUE);
-        TextFlags_SetAutoScrollParam(FALSE);
+        TextFlags_SetAutoScrollParam(AUTO_SCROLL_OFF);
 
         String *temp = String_New(0x400, data->heapId);
         data->string = String_New(0x400, data->heapId);
@@ -1777,9 +1777,6 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
 
     // NO INFO NEEDED
     case OAK_SPEECH_MAIN_STATE_NO_INFO_NEEDED_FADE_IN:
-        // Speedchoice change, debug
-        Speedchoice_SetAttr(Save_Speedchoice_Get(data->saveData), SPEEDCHOICE_HOLD_TO_MASH, SPEEDCHOICE_HOLD_TO_MASH_YES);
-
         OakSpeech_ClearBgLayer0TopBottomAndCommit(data);
         OakSpeech_TouchToAdvanceButtonAction(data, TOUCHTOADVANCE_SHOW);
         OakSpeech_SetButtonTutorialScreenLayout(data, 0);

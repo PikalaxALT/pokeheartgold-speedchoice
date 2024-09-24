@@ -519,9 +519,9 @@ void TextFlags_SetCanABSpeedUpPrint(BOOL param0) {
     sTextFlags.canABSpeedUpPrint = param0;
 }
 
-void TextFlags_SetAutoScrollParam(int param0) {
-    sTextFlags.autoScroll           = param0 & 1;
-    sTextFlags.autoScrollCanSpeedUp = (param0 >> 1) & 1;
+void TextFlags_SetAutoScrollParam(int param) {
+    sTextFlags.autoScroll           = param & 1;
+    sTextFlags.autoScrollCanSpeedUp = (param >> 1) & 1;
 }
 
 void TextFlags_SetCanTouchSpeedUpPrint(BOOL enable) {
@@ -537,7 +537,7 @@ u8 TextFlags_GetHasSpedUpInput(void) {
 }
 
 void TextFlags_ResetHasSpedUpInput(void) {
-    sTextFlags.hasSpedUpInput = 0;
+    sTextFlags.hasSpedUpInput = FALSE;
 }
 
 u8 TextFlags_GetHasContinuedInput(void) {
@@ -545,7 +545,7 @@ u8 TextFlags_GetHasContinuedInput(void) {
 }
 
 void TextFlags_ResetHasContinuedInput(void) {
-    sTextFlags.hasContinuedInput = 0;
+    sTextFlags.hasContinuedInput = FALSE;
 }
 
 BOOL TextFlags_GetIsTouchSpeedingUpPrint(void) {
@@ -556,12 +556,12 @@ BOOL TextFlags_GetIsTouchSpeedingUpPrint(void) {
     }
 }
 
-void sub_02002C20(const TouchscreenHitbox *hitbox) {
+void TextFlags_SetFastForwardTouchButtonHitbox(const TouchscreenHitbox *hitbox) {
     sTextFlags.touchHitboxActive = TRUE;
     sTouchScreenHitbox           = *hitbox;
 }
 
-void sub_02002C40(void) {
+void TextFlags_UnsetFastForwardTouchButtonHitbox(void) {
     sTextFlags.touchHitboxActive   = FALSE;
     sTouchScreenHitbox.rect.top    = 0;
     sTouchScreenHitbox.rect.bottom = 192;
@@ -572,10 +572,10 @@ void sub_02002C40(void) {
 void TextFlags_BeginAutoScroll(BOOL noSpeedUp) {
     if (noSpeedUp == FALSE) {
         TextFlags_SetCanABSpeedUpPrint(TRUE);
-        TextFlags_SetAutoScrollParam(3);
+        TextFlags_SetAutoScrollParam(AUTO_SCROLL_ENABLE | AUTO_SCROLL_SPEEDUP);
         TextFlags_SetCanTouchSpeedUpPrint(TRUE);
     } else {
-        TextFlags_SetAutoScrollParam(1);
+        TextFlags_SetAutoScrollParam(AUTO_SCROLL_ENABLE);
         TextFlags_SetCanABSpeedUpPrint(FALSE);
         TextFlags_SetCanTouchSpeedUpPrint(FALSE);
     }
@@ -583,7 +583,7 @@ void TextFlags_BeginAutoScroll(BOOL noSpeedUp) {
 
 void TextFlags_EndAutoScroll(void) {
     TextFlags_SetCanABSpeedUpPrint(FALSE);
-    TextFlags_SetAutoScrollParam(0);
+    TextFlags_SetAutoScrollParam(AUTO_SCROLL_OFF);
     TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 }
 

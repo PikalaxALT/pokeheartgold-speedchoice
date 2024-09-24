@@ -1,11 +1,11 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -O2 -Wall -Wno-switch -Wno-unused-but-set-variable
-CFLAGS   := -O2 -Wall -Wno-switch
+OPTFLAGS = -O2 -DNDEBUG
+ifneq ($(DEBUG),)
+OPTFLAGS = -g
+endif
+CXXFLAGS := -std=c++17 $(OPTFLAGS) -Wall -Wno-switch -Wno-unused-but-set-variable
 LDFLAGS  :=
 
-ifeq ($(DEBUG),)
-CXXFLAGS += -DNDEBUG
-endif
 
 DEPDIR := .deps
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d

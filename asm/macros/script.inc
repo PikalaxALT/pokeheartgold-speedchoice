@@ -4761,7 +4761,7 @@
 	.macro get_speedchoice_attr attr, dest
 	.short 853
 	.byte \attr
-	.byte \dest
+	.short \dest
 	.endm
 
 	; Script headers

@@ -28,10 +28,15 @@ typedef struct TextPrinterSubStruct {
     u8 autoScrollDelay    : 8;
 } TextPrinterSubStruct;
 
+// Argument to TextFlags_SetAutoScrollParam
+#define AUTO_SCROLL_OFF     0
+#define AUTO_SCROLL_ENABLE  (1 << 0)
+#define AUTO_SCROLL_SPEEDUP (1 << 1)
+
 RenderResult RenderText(TextPrinter *printer);
 void TextFlags_SetCanABSpeedUpPrint(BOOL enable);
 void TextPrinter_SetDownArrowBaseTile(int tile);
-void TextFlags_SetAutoScrollParam(int a0);
+void TextFlags_SetAutoScrollParam(int param);
 void TextFlags_SetCanTouchSpeedUpPrint(BOOL enable);
 void TextFlags_SetAlternateDownArrow(BOOL enable);
 u8 TextFlags_GetHasSpedUpInput();
@@ -39,8 +44,8 @@ void TextFlags_ResetHasSpedUpInput(void);
 u8 TextFlags_GetHasContinuedInput(void);
 void TextFlags_ResetHasContinuedInput(void);
 BOOL TextFlags_GetIsTouchSpeedingUpPrint(void);
-void sub_02002C20(const TouchscreenHitbox *hitbox);
-void sub_02002C40(void);
+void TextFlags_SetFastForwardTouchButtonHitbox(const TouchscreenHitbox *hitbox);
+void TextFlags_UnsetFastForwardTouchButtonHitbox(void);
 void TextFlags_BeginAutoScroll(BOOL noSpeedUp);
 void TextFlags_EndAutoScroll(void);
 

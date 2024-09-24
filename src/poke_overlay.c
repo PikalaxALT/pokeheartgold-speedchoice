@@ -47,7 +47,8 @@ static PMiOverlayRegion GetOverlayLoadDestination(FSOverlayID id) {
     FSOverlayInfo info;
     u8 *end;
     u8 *start;
-    GF_ASSERT(FS_LoadOverlayInfo(&info, MI_PROCESSOR_ARM9, id) == TRUE);
+    BOOL result = FS_LoadOverlayInfo(&info, MI_PROCESSOR_ARM9, id);
+    GF_ASSERT(result == TRUE);
     start = (u8 *)HW_ITCM_IMAGE;
     end   = (u8 *)HW_ITCM_END;
     if (info.header.ram_address <= end && info.header.ram_address >= start) {

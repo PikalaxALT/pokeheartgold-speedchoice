@@ -17,6 +17,10 @@
 	scrdef_end
 
 scr_seq_T28_005:
+	// Speedchoice change
+	get_speedchoice_attr SPEEDCHOICE_ROCKETLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, 1
+	goto_if_eq .rocketless
 	setvar VAR_SCENE_ROCKET_TAKEOVER, 2
 	setflag FLAG_UNK_0C5
 	setflag FLAG_ROCKET_TAKEOVER_ACTIVE
@@ -28,7 +32,8 @@ _0047:
 	setvar VAR_SPECIAL_x8005, 2
 	setvar VAR_SPECIAL_x8006, 2
 	callstd std_phone_call
-	setvar VAR_UNK_4134, 5
+.rocketless:
+	setvar VAR_MIDGAME_BADGES, 5
 	end
 
 scr_seq_T28_000:

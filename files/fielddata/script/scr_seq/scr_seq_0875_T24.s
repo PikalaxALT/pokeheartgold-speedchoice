@@ -44,7 +44,7 @@ scr_seq_T24_006:
 	closemsg
 	apply_movement obj_T24_middlewoman1_2, _00D8
 	wait_movement
-	compare VAR_UNK_4134, 4
+	compare VAR_MIDGAME_BADGES, 4
 	goto_if_eq _00F0
 	releaseall
 	end
@@ -76,6 +76,10 @@ _00E4:
 	step_end
 
 _00F0:
+	// Speedchoice change
+	get_speedchoice_attr SPEEDCHOICE_ROCKETLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, 1
+	goto_if_eq .rocketless
 	setvar VAR_SCENE_ROCKET_TAKEOVER, 2
 	setflag FLAG_UNK_0C5
 	setflag FLAG_ROCKET_TAKEOVER_ACTIVE
@@ -87,7 +91,8 @@ _0111:
 	setvar VAR_SPECIAL_x8005, 2
 	setvar VAR_SPECIAL_x8006, 2
 	callstd std_phone_call
-	setvar VAR_UNK_4134, 5
+.rocketless:
+	setvar VAR_MIDGAME_BADGES, 5
 	releaseall
 	end
 

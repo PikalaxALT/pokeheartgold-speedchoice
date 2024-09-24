@@ -1,7 +1,359 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8'?>
 <body language="English">
-    <row id="msg_speedchoice_options_menu_header" index="0">
+    <row id="msg_speedchoice_options_menu_header">
         <attribute name="window_context_name">used</attribute>
         <language name="English">Choose your options below. Press START to finish.</language>
+    </row>
+    <row id="msg_speedchoice_options_hold_to_mash">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Hold To Mash</language>
+    </row>
+    <row id="msg_speedchoice_options_hold_to_mash_no">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_hold_to_mash_yes">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_hold_to_mash_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off: Press A or B to advance text\nOn: Hold A or B to advance text</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Spinners</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners_purge">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners_keep">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Keep</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners_hell">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Hell</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners_why">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Why</language>
+    </row>
+    <row id="msg_speedchoice_options_spinners_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge: All spinners are rotatoes    Keep: Vanilla\nHell: All trainers are spinners   Why: Hell but faster</language>
+    </row>
+    <row id="msg_speedchoice_options_rocketless">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Rocket Sections</language>
+    </row>
+    <row id="msg_speedchoice_options_rocketless_keep">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Keep</language>
+    </row>
+    <row id="msg_speedchoice_options_rocketless_purge">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge</language>
+    </row>
+    <row id="msg_speedchoice_options_rocketless_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Keep: Vanilla\nPurge: Skip the Rocket takeover</language>
+    </row>
+    <row id="msg_speedchoice_options_health_bars">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">HP Bar Animations</language>
+    </row>
+    <row id="msg_speedchoice_options_health_bars_vanilla">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla</language>
+    </row>
+    <row id="msg_speedchoice_options_health_bars_fast">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Fast</language>
+    </row>
+    <row id="msg_speedchoice_options_health_bars_instant">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Instant</language>
+    </row>
+    <row id="msg_speedchoice_options_health_bars_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla: Normal speed   Fast: 1 frame per pixel\nInstant: No animation</language>
+    </row>
+    <row id="msg_speedchoice_options_better_marts">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Better Marts</language>
+    </row>
+    <row id="msg_speedchoice_options_better_marts_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_better_marts_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_better_marts_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">If set, all marts will have their\nendgame inventory</language>
+    </row>
+    <row id="msg_speedchoice_options_good_early_wilds">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Good Early Wilds</language>
+    </row>
+    <row id="msg_speedchoice_options_good_early_wilds_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_good_early_wilds_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_good_early_wilds_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">If set, all wild Pokémon before Violet City\nwill be their final evolved forms</language>
+    </row>
+    <row id="msg_speedchoice_options_bike_music">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge Bike Music</language>
+    </row>
+    <row id="msg_speedchoice_options_bike_music_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_bike_music_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_bike_music_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Whether overworld music should continue\nplaying while biking</language>
+    </row>
+    <row id="msg_speedchoice_options_surf_music">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge Surf Music</language>
+    </row>
+    <row id="msg_speedchoice_options_surf_music_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_surf_music_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_surf_music_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Whether overworld music should continue\nplaying while surfing</language>
+    </row>
+    <row id="msg_speedchoice_options_evil_hau">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Evil Hau</language>
+    </row>
+    <row id="msg_speedchoice_options_evil_hau_no">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">No</language>
+    </row>
+    <row id="msg_speedchoice_options_evil_hau_yes">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Yes</language>
+    </row>
+    <row id="msg_speedchoice_options_evil_hau_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Add extra dialog to Rival when you land a\ncritical hit or super-effective move</language>
+    </row>
+    <row id="msg_speedchoice_options_friendless">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Friend Cutscenes</language>
+    </row>
+    <row id="msg_speedchoice_options_friendless_keep">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Keep</language>
+    </row>
+    <row id="msg_speedchoice_options_friendless_purge">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge</language>
+    </row>
+    <row id="msg_speedchoice_options_friendless_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Whether to remove the cutscenes involving\nEthan or Lyra</language>
+    </row>
+    <row id="msg_speedchoice_options_kimono_segments">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Kimono Segments</language>
+    </row>
+    <row id="msg_speedchoice_options_kimono_segments_keep">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Keep</language>
+    </row>
+    <row id="msg_speedchoice_options_kimono_segments_purge">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Purge</language>
+    </row>
+    <row id="msg_speedchoice_options_kimono_segments_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Whether to remove the Kimono Girls cutscenes\nand story requirements</language>
+    </row>
+    <row id="msg_speedchoice_options_dex_beeps">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Pokédex Beeps</language>
+    </row>
+    <row id="msg_speedchoice_options_dex_beeps_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_dex_beeps_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_dex_beeps_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">The Pokédex will emit a special tone\nwhen you share a map with the displayed Pokémon</language>
+    </row>
+    <row id="msg_speedchoice_options_hms">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">HMs</language>
+    </row>
+    <row id="msg_speedchoice_options_hms_vanilla">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla</language>
+    </row>
+    <row id="msg_speedchoice_options_hms_nerf">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Nerf</language>
+    </row>
+    <row id="msg_speedchoice_options_hms_random">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Random</language>
+    </row>
+    <row id="msg_speedchoice_options_hms_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Nerf: Replaces strong HMs with weaker variants\nRandom: HMs teach random moves instead</language>
+    </row>
+    <row id="msg_speedchoice_options_exp">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Experience</language>
+    </row>
+    <row id="msg_speedchoice_options_exp_vanilla">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla</language>
+    </row>
+    <row id="msg_speedchoice_options_exp_bw">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">B/W Formula</language>
+    </row>
+    <row id="msg_speedchoice_options_exp_none">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">None</language>
+    </row>
+    <row id="msg_speedchoice_options_exp_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">B/W Formula: Experience scales by level gap\nNone: Pokémon do not earn Exp. Points from battle</language>
+    </row>
+    <row id="msg_speedchoice_options_early_kanto">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Early Kanto</language>
+    </row>
+    <row id="msg_speedchoice_options_early_kanto_off">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Off</language>
+    </row>
+    <row id="msg_speedchoice_options_early_kanto_on">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">On</language>
+    </row>
+    <row id="msg_speedchoice_options_early_kanto_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">If set, the SS Ticket call will be after\nRocket tower (Rocketless: at Lake of Rage)</language>
+    </row>
+    <row id="msg_speedchoice_options_trainer_vision">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Trainer Vision</language>
+    </row>
+    <row id="msg_speedchoice_options_trainer_vision_normal">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Normal</language>
+    </row>
+    <row id="msg_speedchoice_options_trainer_vision_max">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Max</language>
+    </row>
+    <row id="msg_speedchoice_options_trainer_vision_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Max: Trainers can see you from anywhere,\nincluding through collision</language>
+    </row>
+    <row id="msg_speedchoice_options_name">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Player’s Name</language>
+    </row>
+    <row id="msg_speedchoice_options_name_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Enter your name</language>
+    </row>
+    <row id="msg_speedchoice_options_model">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Player Model</language>
+    </row>
+    <row id="msg_speedchoice_options_model_ethan">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Ethan</language>
+    </row>
+    <row id="msg_speedchoice_options_model_lyra">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Lyra</language>
+    </row>
+    <row id="msg_speedchoice_options_model_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Choose your player’s appearance</language>
+    </row>
+    <row id="msg_speedchoice_options_CV">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">CV: {STRVAR_1 3, 0, 0}</language>
+    </row>
+    <row id="msg_speedchoice_options_prompt_okay">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Are these settings okay?</language>
+    </row>
+    <row id="msg_speedchoice_options_prompt_okay_yes">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">YES</language>
+    </row>
+    <row id="msg_speedchoice_options_prompt_okay_no">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">NO</language>
+    </row>
+    <row id="msg_speedchoice_options_preset">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">PRESET</language>
+    </row>
+    <row id="msg_speedchoice_options_preset_vanilla">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla</language>
+    </row>
+    <row id="msg_speedchoice_options_preset_bingo">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Bingo</language>
+    </row>
+    <row id="msg_speedchoice_options_preset_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Select a settings preset</language>
+    </row>
+    <row id="msg_speedchoice_options_goal">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Goal</language>
+    </row>
+    <row id="msg_speedchoice_options_goal_lance">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Lance</language>
+    </row>
+    <row id="msg_speedchoice_options_goal_red">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Red</language>
+    </row>
+    <row id="msg_speedchoice_options_goal_manual">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Manual</language>
+    </row>
+    <row id="msg_speedchoice_options_goal_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Choose the goal for the race.\nManual: Use the Done Button in your Bag</language>
     </row>
 </body>

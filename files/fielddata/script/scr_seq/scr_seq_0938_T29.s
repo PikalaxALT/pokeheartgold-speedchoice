@@ -336,6 +336,12 @@ scr_seq_T29_003:
 	npc_msg msg_0626_T29_00002
 	faceplayer
 	buffer_players_name 0
+
+	// Speedchoice change: Rocketless
+	get_speedchoice_attr SPEEDCHOICE_ROCKETLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, 1
+	goto_if_eq .rocketless
+
 	gender_msgbox msg_0626_T29_00003, msg_0626_T29_00004
 	touchscreen_menu_hide
 	getmenuchoice VAR_SPECIAL_RESULT
@@ -359,6 +365,97 @@ _04BB:
 	hide_person obj_T29_tsure_poke_static_dragonite
 	clearflag FLAG_HIDE_MAHOGANY_SHOP_LANCE
 	setvar VAR_UNK_40A8, 1
+	releaseall
+	end
+
+	// Speedchoice change
+.rocketless:
+	npc_msg msg_0626_T29_lance_ask_take_junk
+	touchscreen_menu_hide
+	getmenuchoice VAR_SPECIAL_RESULT
+	touchscreen_menu_show
+	compare VAR_SPECIAL_RESULT, 0
+	goto_if_eq .rocketless_yes
+	compare VAR_SPECIAL_RESULT, 1
+	goto_if_eq _04FA
+.rocketless_yes:
+	buffer_players_name 0
+	npc_msg msg_0626_T29_lance_take_junk_yes
+	wait_button
+
+	// Set state after Mahogany Hideout
+	giveitem_no_check ITEM_HM05, 1
+	setflag FLAG_UNK_1E5
+	setflag FLAG_RED_GYARADOS_MEET
+	clearflag FLAG_HIDE_ROUTE_43_GATE_GUARD
+	setflag FLAG_HIDE_ROUTE_43_GATE_ROCKETS
+	setflag FLAG_UNK_1F9
+	setvar VAR_UNK_40AC, 10
+	setvar VAR_UNK_410F, 1
+	scrcmd_530 0, 1
+	setvar VAR_ROCKET_TRAP_KOFFING_1, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_1, 1
+	setvar VAR_ROCKET_TRAP_GEODUDE_1, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_2, 1
+	setvar VAR_ROCKET_TRAP_GEODUDE_2, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_3, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_4, 1
+	setvar VAR_ROCKET_TRAP_KOFFING_2, 1
+	setvar VAR_ROCKET_TRAP_KOFFING_3, 1
+	setvar VAR_ROCKET_TRAP_GEODUDE_3, 1
+	setvar VAR_ROCKET_TRAP_GEODUDE_4, 1
+	setvar VAR_ROCKET_TRAP_KOFFING_4, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_5, 1
+	setvar VAR_ROCKET_TRAP_VOLTORB_6, 1
+	setvar VAR_ROCKET_TRAP_KOFFING_5, 1
+	setvar VAR_ROCKET_TRAP_GEODUDE_5, 1
+
+	// Set state after Radio Tower West
+	giveitem_no_check ITEM_BASEMENT_KEY, 1
+	setvar VAR_UNK_40E7, 2
+	clearflag FLAG_HIDE_UNDERGROUND_KIMONO_GIRL
+
+	// Set state after Underground Basement
+	giveitem_no_check ITEM_CARD_KEY, 1
+	setflag FLAG_UNK_1C1
+
+	// Set state after Radio Tower East
+	get_game_version VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, VERSION_HEARTGOLD
+	goto_if_ne .soulsilver
+	giveitem_no_check ITEM_CLEAR_BELL, 1
+	setflag FLAG_UNK_103
+	goto .okay
+
+.soulsilver:
+	giveitem_no_check ITEM_TIDAL_BELL, 1
+	setflag FLAG_UNK_104
+.okay:
+	closemsg
+	clearflag FLAG_HIDE_DANCE_STUDIO_LITTLE_GIRL
+	setflag FLAG_HIDE_DANCE_STUDIO_KIMONO_GIRLS
+	setflag FLAG_HIDE_DANCE_STUDIO_LITTLE_GIRL
+	setvar VAR_UNK_410C, 6
+	setvar VAR_UNK_40FA, 1
+	setvar VAR_SCENE_ROCKET_TAKEOVER, 5
+	get_game_version VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, VERSION_HEARTGOLD
+	goto_if_ne .soulsilver_2
+	clearflag FLAG_HIDE_BELL_TOWER_SUMMIT_KIMONO_GIRLS
+	goto .okay_2
+
+.soulsilver_2:
+	clearflag FLAG_HIDE_WHIRL_ISLANDS_BOTTOM_KIMONO_GIRLS
+.okay_2:
+	apply_movement obj_T29_tsure_poke_static_dragonite, _0538
+	wait_movement
+	apply_movement obj_T29_wataru, _0544
+	wait_movement
+	scrcmd_775 8, 10
+	setflag FLAG_HIDE_LAKE_OF_RAGE_LANCE
+	hide_person obj_T29_wataru
+	hide_person obj_T29_tsure_poke_static_dragonite
+
 	releaseall
 	end
 

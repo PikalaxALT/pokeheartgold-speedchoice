@@ -602,7 +602,7 @@ _08F1:
 	apply_movement obj_T03R0101_gsassistantm, _09D8
 	wait_movement
 	takeitem ITEM_ENIGMA_STONE, 1, VAR_SPECIAL_RESULT
-	setvar VAR_SPECIAL_x8004, 225
+	setvar VAR_SPECIAL_x8004, ITEM_SOUL_DEW
 	setvar VAR_SPECIAL_x8005, 1
 	callstd std_obtain_item_verbose
 	closemsg
