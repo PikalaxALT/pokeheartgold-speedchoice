@@ -939,9 +939,9 @@ BOOL ScrCmd_743(ScriptContext *ctx) {
 }
 
 static const u8 sFriendshipRoomStatuesPositions[3][2] = {
-    { 4,  10 },
-    { 7,  5  },
-    { 10, 10 },
+    {4,   10},
+    { 7,  5 },
+    { 10, 10},
 };
 
 BOOL ScrCmd_CreatePokeathlonFriendshipRoomStatues(ScriptContext *ctx) {
@@ -984,7 +984,7 @@ static LocalMapObject *ov01_02201F98(MapObjectManager *mapObjectManager, u8 unkA
     MapObject_SetID(mapObj, unkA + 0xf6);
     MapObject_SetType(mapObj, 0);
     MapObject_SetFlagID(mapObj, 0);
-    MapObject_SetScript(mapObj, 0);
+    MapObject_SetScriptID(mapObj, 0);
     MapObject_SetParam(mapObj, 0, 2);
     sub_02069F0C(mapObj, species, (u8)form, FALSE, spriteId);
     MapObject_SetXRange(mapObj, -1);
@@ -1163,8 +1163,8 @@ BOOL ScrCmd_RadioMusicIsPlaying(ScriptContext *ctx) {
 }
 
 static const int sSlotLuckDistribution[2][2] = {
-    { 7, 3 },
-    { 5, 2 },
+    {7,  3},
+    { 5, 2},
 };
 
 // Return value is unused outside of Japanese copies.

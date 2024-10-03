@@ -1384,8 +1384,8 @@ u8 GetBgPriority(BgConfig *bgConfig, u8 bgId) {
     return 0;
 }
 
-#define GetPixelAddressFromBlit4bpp(ptr, x, y, width) ((u8 *)((ptr) + (((x) >> 1) & 3) + (((x) << 2) & 0x3FE0) + ((((y) << 2) & 0x3FE0) * (width)) + (((u32)(((y) << 2) & 0x1C)))))
-#define GetPixelAddressFromBlit8bpp(ptr, x, y, width) ((u8 *)((ptr) + ((x) & 7) + (((x) << 3) & 0x7FC0) + ((((y) << 3) & 0x7FC0) * (width)) + (((u32)(((y) << 3) & 0x38)))))
+#define GetPixelAddressFromBlit4bpp(ptr, x, y, width) ((u8 *)((ptr) + (((x) >> 1) & 3) + (((x) << 2) & 0x3FE0) + ((((y) << 2) & 0x3FE0) * (width)) + ((u32)(((y) << 2) & 0x1C))))
+#define GetPixelAddressFromBlit8bpp(ptr, x, y, width) ((u8 *)((ptr) + ((x) & 7) + (((x) << 3) & 0x7FC0) + ((((y) << 3) & 0x7FC0) * (width)) + ((u32)(((y) << 3) & 0x38))))
 #define ConvertPixelsToTiles(x)                       (((x) + ((x) & 7)) >> 3)
 
 void BlitBitmapRect4Bit(const Bitmap *src, const Bitmap *dest, u16 srcX, u16 srcY, u16 destX, u16 destY, u16 width, u16 height, u16 colorKey) {
@@ -1792,12 +1792,12 @@ void FillWindowPixelBuffer(Window *window, u8 fillValue) {
     if (window->bgConfig->bgs[window->bgId].tileSize == 0x20) {
         fillValue |= fillValue << 4;
     }
-    MI_CpuFillFast(window->pixelBuffer, ((fillValue << 24) | (fillValue << 16) | (fillValue << 8) | (fillValue << 0)), window->bgConfig->bgs[window->bgId].tileSize * window->width * window->height);
+    MI_CpuFillFast(window->pixelBuffer, (fillValue << 24) | (fillValue << 16) | (fillValue << 8) | (fillValue << 0), window->bgConfig->bgs[window->bgId].tileSize * window->width * window->height);
 }
 
 void FillWindowPixelBufferText_AssumeTileSize32(Window *window, u8 fillValue) {
     fillValue |= fillValue << 4;
-    MI_CpuFillFast(window->pixelBuffer, ((fillValue << 24) | (fillValue << 16) | (fillValue << 8) | (fillValue << 0)), 32 * window->width * window->height);
+    MI_CpuFillFast(window->pixelBuffer, (fillValue << 24) | (fillValue << 16) | (fillValue << 8) | (fillValue << 0), 32 * window->width * window->height);
 }
 
 void BlitBitmapRectToWindow(Window *window, void *src, u16 srcX, u16 srcY, u16 srcWidth, u16 srcHeight, u16 destX, u16 destY, u16 destWidth, u16 destHeight) {

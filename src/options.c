@@ -4,6 +4,7 @@
 
 #include "player_data.h"
 #include "system.h"
+#include "text.h"
 
 Options *Options_New(HeapID heapId) {
     Options *ret = AllocFromHeap(heapId, sizeof(Options));
@@ -18,7 +19,7 @@ void Options_Copy(Options *src, Options *dest) {
 void Options_Init(Options *options) {
     MI_CpuClear8(options, sizeof(Options));
 
-    options->textSpeed   = 1; // mid speed
+    options->textSpeed   = 2; // instant speed
     options->soundMethod = 0; // stereo
     options->battleStyle = 1; // set
     options->battleScene = 1; // off
@@ -54,14 +55,14 @@ u8 Options_GetTextFrameDelay(Options *options) {
     u32 textSpeed = Options_GetTextSpeed(options);
 
     if (textSpeed == 0) {
-        return 8;
+        return TEXT_SPEED_MID;
     }
 
     if (textSpeed == 1) {
-        return 4;
+        return TEXT_SPEED_FAST;
     }
 
-    return 1;
+    return TEXT_SPEED_OPT_INSTANT;
 }
 
 u32 Options_GetSoundMethod(Options *options) {

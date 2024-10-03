@@ -356,4 +356,20 @@
         <attribute name="window_context_name">used</attribute>
         <language name="English">Choose the goal for the race.\nManual: Use the Done Button in your Bag</language>
     </row>
+    <row id="msg_speedchoice_options_running_shoes">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Running Shoes</language>
+    </row>
+    <row id="msg_speedchoice_options_running_shoes_vanilla">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Vanilla</language>
+    </row>
+    <row id="msg_speedchoice_options_running_shoes_from_start">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">From Start</language>
+    </row>
+    <row id="msg_speedchoice_options_running_shoes_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Whether to have the running shoes\nenabled from the beginning</language>
+    </row>
 </body>

@@ -9,8 +9,12 @@
 
 #define MAKE_TEXT_COLOR(fg, sh, bg) ((((fg) & 0xFF) << 16) | (((sh) & 0xFF) << 8) | (((bg) & 0xFF) << 0))
 
-#define TEXT_SPEED_INSTANT    0    // Transfers to VRAM
-#define TEXT_SPEED_NOTRANSFER 0xFF // Defers VRAM transfer
+#define TEXT_SPEED_SLOW        8
+#define TEXT_SPEED_MID         4
+#define TEXT_SPEED_FAST        1
+#define TEXT_SPEED_INSTANT     0    // Transfers to VRAM
+#define TEXT_SPEED_NOTRANSFER  0xFF // Defers VRAM transfer
+#define TEXT_SPEED_OPT_INSTANT 0xFE
 
 #define MAX_TEXT_PRINTERS 8
 

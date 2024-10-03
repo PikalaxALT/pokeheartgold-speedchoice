@@ -94,7 +94,7 @@ u8 AddTextPrinterParameterized(Window *window, FontID fontId, String *string, u3
     template.fgColor             = sFonts[fontId].fgColor;
     template.bgColor             = sFonts[fontId].bgColor;
     template.shadowColor         = sFonts[fontId].shadowColor;
-    template.unk18               = 0;
+    template.glyphTable          = 0;
     template.unk1A               = 0;
     template.unk1B               = 0xFF;
 
@@ -117,7 +117,7 @@ u8 AddTextPrinterParameterizedWithColor(Window *window, FontID fontId, String *s
     template.fgColor             = (color >> 16) & 0xFF;
     template.shadowColor         = (color >> 8) & 0xFF;
     template.bgColor             = (color >> 0) & 0xFF;
-    template.unk18               = 0;
+    template.glyphTable          = 0;
     template.unk1A               = 0;
     template.unk1B               = 0xFF;
 
@@ -140,7 +140,7 @@ u8 AddTextPrinterParameterizedWithColorAndSpacing(Window *window, int fontId, St
     template.fgColor             = (color >> 16) & 0xFF;
     template.shadowColor         = (color >> 8) & 0xFF;
     template.bgColor             = (color >> 0) & 0xFF;
-    template.unk18               = 0;
+    template.glyphTable          = 0;
     template.unk1A               = 0;
     template.unk1B               = 0xFF;
 
@@ -170,7 +170,12 @@ static u8 AddTextPrinter(TextPrinterTemplate *template, u32 speed, PrinterCallba
     sub_020204B8(printer);
 
     if (speed != TEXT_SPEED_NOTRANSFER && speed != TEXT_SPEED_INSTANT) {
-        printer->textSpeedBottom--;
+        if (speed == TEXT_SPEED_OPT_INSTANT) {
+            printer->textSpeedBottom = 0;
+            TextPrinter_SetInstantText(printer, TRUE);
+        } else {
+            printer->textSpeedBottom--;
+        }
         printer->textSpeedTop = 1;
         printer->id           = CreateTextPrinterSysTask((SysTaskFunc)RunTextPrinter, printer, 1);
         return printer->id;
@@ -206,7 +211,7 @@ static void RunTextPrinter(SysTask *task, TextPrinter *printer) {
     }
 
     RenderResult renderResult;
-    BOOL isInstantText = TRUE;
+    BOOL isInstantText = TextPrinter_IsInstantText(printer);
     do {
         if (printer->unk2D == 0) {
             printer->unk2E = 0;

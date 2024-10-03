@@ -20,7 +20,8 @@ struct SaveSpeedchoice {
     u32 exp            : 2;
     u32 earlyKanto     : 1;
     u32 goal           : 1;
-    u32                : 10;
+    u32 runningShoes   : 1;
+    u32                : 9;
 };
 
 u32 Save_Speedchoice_sizeof(void) {
@@ -31,7 +32,7 @@ void Save_Speedchoice_Init(SaveSpeedchoice *ssc) {
     MI_CpuClearFast(ssc, sizeof(SaveSpeedchoice));
     // temp for testing
     Speedchoice_SetAttr(ssc, SPEEDCHOICE_HOLD_TO_MASH, SPEEDCHOICE_HOLD_TO_MASH_YES);
-    Speedchoice_SetAttr(ssc, SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON);
+    // Speedchoice_SetAttr(ssc, SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON);
 }
 
 SaveSpeedchoice *Save_Speedchoice_Get(SaveData *saveData) {
@@ -75,6 +76,8 @@ int Speedchoice_GetAttr(SaveSpeedchoice *ssc, int stg) {
         return ssc->earlyKanto;
     case SPEEDCHOICE_GOAL:
         return ssc->goal;
+    case SPEEDCHOICE_RUNNING_SHOES:
+        return ssc->runningShoes;
     default:
         GF_ASSERT(FALSE);
         return 0;
@@ -133,6 +136,9 @@ void Speedchoice_SetAttr(SaveSpeedchoice *ssc, int stg, int val) {
         break;
     case SPEEDCHOICE_GOAL:
         ssc->goal = val;
+        break;
+    case SPEEDCHOICE_RUNNING_SHOES:
+        ssc->runningShoes = val;
         break;
     default:
         GF_ASSERT(FALSE);

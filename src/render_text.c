@@ -28,7 +28,7 @@ static u8 TextPrinter_Wait(TextPrinter *printer);
 
 // Speedchoice change
 static BOOL TextPrinter_ContinueInputHeld(TextPrinterSubStruct *subStruct) {
-    if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) && (sTextFlags.holdToMash || subStruct->hasPrintBeenSpedUp)) {
+    if ((gSystem.heldKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) && (subStruct->hasPrintBeenSpedUp || sTextFlags.holdToMash)) {
         sTextFlags.touchIsSpeedingUpPrint = FALSE;
         return TRUE;
     }
@@ -83,12 +83,28 @@ RenderResult RenderText(TextPrinter *printer) {
 
     switch (printer->state) {
     case 0:
-        // Speedchoice change
-        printer->delayCounter = 0;
-        if (printer->textSpeedBottom != 0) {
-            sTextFlags.hasSpedUpInput = 1;
+        if (TextPrinter_ContinueInputHeld(subStruct)) {
+            printer->delayCounter = 0;
+            if (printer->textSpeedBottom != 0) {
+                sTextFlags.hasSpedUpInput = 1;
+            }
         }
-        currentChar = *printer->template.currentChar.raw;
+
+        if (printer->delayCounter && printer->textSpeedBottom) {
+            printer->delayCounter--;
+
+            if (sTextFlags.canABSpeedUpPrint != 0) {
+                if (TextPrinter_ContinueInputNew()) {
+                    subStruct->hasPrintBeenSpedUp = 1;
+                    printer->delayCounter         = 0;
+                }
+            }
+
+            return RENDER_UPDATE;
+        }
+
+        printer->delayCounter = printer->textSpeedBottom;
+        currentChar           = *printer->template.currentChar.raw;
         printer->template.currentChar.raw++;
 
         GF_ASSERT(currentChar != 0xF100);
@@ -213,12 +229,12 @@ RenderResult RenderText(TextPrinter *printer) {
 
                 switch (field) {
                 case 100:
-                    printer->template.unk18 = 0;
-                    printer->template.unk1A = 0;
+                    printer->template.glyphTable = 0;
+                    printer->template.unk1A      = 0;
                     break;
                 case 200:
-                    printer->template.unk18 = 0xFFFC;
-                    printer->template.unk1A = 0;
+                    printer->template.glyphTable = 0xFFFC;
+                    printer->template.unk1A      = 0;
                     break;
                 }
 
@@ -261,16 +277,16 @@ RenderResult RenderText(TextPrinter *printer) {
             return RENDER_UPDATE;
         }
 
-        GlyphInfo *r5 = FontID_TryLoadGlyph(subStruct->glyphId, currentChar);
+        GlyphInfo *glyphInfo = FontID_TryLoadGlyph(subStruct->fontId, currentChar);
         CopyGlyphToWindow(printer->template.window,
-            r5->data,
-            r5->width,
-            r5->height,
+            glyphInfo->data,
+            glyphInfo->width,
+            glyphInfo->height,
             printer->template.currentX,
             printer->template.currentY,
-            printer->template.unk18);
+            printer->template.glyphTable);
 
-        printer->template.currentX += r5->width + printer->template.letterSpacing;
+        printer->template.currentX += glyphInfo->width + printer->template.letterSpacing;
 
         return RENDER_PRINT;
     case 1:
@@ -307,13 +323,13 @@ RenderResult RenderText(TextPrinter *printer) {
                 ScrollWindow(printer->template.window,
                     0,
                     printer->scrollDistance,
-                    (printer->template.bgColor | (printer->template.bgColor << 4)));
+                    printer->template.bgColor | (printer->template.bgColor << 4));
                 printer->scrollDistance = 0;
             } else {
                 ScrollWindow(printer->template.window,
                     0,
                     4,
-                    (printer->template.bgColor | (printer->template.bgColor << 4)));
+                    printer->template.bgColor | (printer->template.bgColor << 4));
 
                 printer->scrollDistance -= 4;
             }
@@ -442,26 +458,26 @@ static void TextPrinter_ClearDownArrow(TextPrinter *printer) {
         return;
     }
 
-    u8 bg_id  = GetWindowBgId(printer->template.window);
-    u8 x      = GetWindowX(printer->template.window);
-    u8 y      = GetWindowY(printer->template.window);
-    u8 width  = GetWindowWidth(printer->template.window);
-    u8 height = GetWindowHeight(printer->template.window) - 2;
-    u16 r6    = sDownArrowBaseTile;
+    u8 bg_id     = GetWindowBgId(printer->template.window);
+    u8 x         = GetWindowX(printer->template.window);
+    u8 y         = GetWindowY(printer->template.window);
+    u8 width     = GetWindowWidth(printer->template.window);
+    u8 height    = GetWindowHeight(printer->template.window) - 2;
+    u16 baseTile = sDownArrowBaseTile;
 
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (r6 + 10),
-        (x + width + 1),
-        (y + height),
+        baseTile + 10,
+        x + width + 1,
+        y + height,
         1,
         2,
         0x10);
     FillBgTilemapRect(printer->template.window->bgConfig,
         bg_id,
-        (r6 + 11),
-        (x + width + 2),
-        (y + height),
+        baseTile + 11,
+        x + width + 2,
+        y + height,
         1,
         2,
         0x10);
@@ -590,4 +606,14 @@ void TextFlags_EndAutoScroll(void) {
 // Speedchoice change
 void TextFlags_SetHoldToMash(BOOL holdToMash) {
     sTextFlags.holdToMash = holdToMash;
+}
+
+BOOL TextPrinter_IsInstantText(TextPrinter *printer) {
+    TextPrinterSubStruct *substruct = (TextPrinterSubStruct *)printer->subStructFields;
+    return substruct->isInstantText;
+}
+
+BOOL TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag) {
+    TextPrinterSubStruct *substruct = (TextPrinterSubStruct *)printer->subStructFields;
+    substruct->isInstantText        = flag;
 }

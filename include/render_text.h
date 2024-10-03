@@ -19,13 +19,14 @@ typedef struct TextFlags {
 } TextFlags;
 
 typedef struct TextPrinterSubStruct {
-    u8 glyphId            : 4; // 0x14
+    u8 fontId             : 4; // 0x14
     u8 hasPrintBeenSpedUp : 1;
     u8 unk                : 3;
     u8 downArrowDelay     : 5;
     u8 downArrowYPosIdx   : 2;
     u8 hasFontIdBeenSet   : 1;
     u8 autoScrollDelay    : 8;
+    u8 isInstantText      : 1;
 } TextPrinterSubStruct;
 
 // Argument to TextFlags_SetAutoScrollParam
@@ -51,5 +52,7 @@ void TextFlags_EndAutoScroll(void);
 
 // Speedchoice change
 void TextFlags_SetHoldToMash(BOOL holdToMash);
+BOOL TextPrinter_IsInstantText(TextPrinter *printer);
+BOOL TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag);
 
 #endif // POKEHEARTGOLD_RENDER_TEXT_H

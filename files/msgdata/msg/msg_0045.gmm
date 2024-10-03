@@ -38,15 +38,15 @@
 	</row>
 	<row id="msg_0045_00009" index="9">
 		<attribute name="window_context_name">used</attribute>
-		<language name="English">SLOW</language>
+		<language name="English">MID</language>
 	</row>
 	<row id="msg_0045_00010" index="10">
 		<attribute name="window_context_name">used</attribute>
-		<language name="English">MID</language>
+		<language name="English">FAST</language>
 	</row>
 	<row id="msg_0045_00011" index="11">
 		<attribute name="window_context_name">used</attribute>
-		<language name="English">FAST</language>
+		<language name="English">INST</language>
 	</row>
 	<row id="msg_0045_00012" index="12">
 		<attribute name="window_context_name">used</attribute>
