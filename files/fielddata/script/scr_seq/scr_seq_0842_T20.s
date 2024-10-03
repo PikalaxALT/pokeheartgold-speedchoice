@@ -53,16 +53,12 @@ scr_seq_T20_009:
 	end
 
 _00A4:
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
-	goto_if_eq .friendless
 	clearflag FLAG_HIDE_NEW_BARK_FRIEND
 	show_person obj_T20_var_1
 	clearflag FLAG_HIDE_NEW_BARK_MARILL
 	show_person obj_T20_tsure_poke_static_marill
 	move_person_facing obj_T20_var_1, 686, 0, 396, DIR_WEST
 	move_person_facing obj_T20_tsure_poke_static_marill, 685, 0, 396, DIR_SOUTH
-.friendless:
 	end
 
 scr_seq_T20_000:
@@ -1222,10 +1218,10 @@ scr_seq_T20_008:
 	wait_movement
 	hide_person obj_T20_tsure_poke_static_marill
 	hide_person obj_T20_var_1
-.friendless_3:
 	setflag FLAG_HIDE_NEW_BARK_MARILL
 	setflag FLAG_HIDE_NEW_BARK_FRIEND
 	callstd std_fade_end_friend_music
+.friendless_3:
 	setvar VAR_SCENE_NEW_BARK_TOWN_OW, 2
 	releaseall
 	end

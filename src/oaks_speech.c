@@ -1534,7 +1534,8 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
         sub_02004EC4(2, SEQ_GS_POKEMON_THEME, 1);
         StopBGM(SEQ_GS_POKEMON_THEME, 0);
         PlayBGM(SEQ_GS_STARTING);
-        data->state = OAK_SPEECH_MAIN_STATE_FADE_IN_TUTORIAL_MENU;
+        // data->state = OAK_SPEECH_MAIN_STATE_FADE_IN_TUTORIAL_MENU;
+        data->state = OAK_SPEECH_MAIN_STATE_NO_INFO_NEEDED_FADE_IN;
         break;
     case OAK_SPEECH_MAIN_STATE_FADE_IN_TUTORIAL_MENU:
         ov53_021E6824(data, 0);
@@ -1791,7 +1792,13 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
     case OAK_SPEECH_MAIN_STATE_WAIT_FADE_IN_NO_INFO_NEEDED:
         if (IsPaletteFadeFinished() == TRUE && OakSpeech_WaitFrames(data, 40) == TRUE) {
             // Speedchoice change
-            TextFlags_SetHoldToMash(Speedchoice_GetAttr(Save_Speedchoice_Get(data->saveData), SPEEDCHOICE_HOLD_TO_MASH));
+            SaveSpeedchoice *ssc = Save_Speedchoice_Get(data->saveData);
+            TextFlags_SetHoldToMash(Speedchoice_GetAttr(ssc, SPEEDCHOICE_HOLD_TO_MASH));
+            if (Speedchoice_GetAttr(ssc, SPEEDCHOICE_RUNNING_SHOES) == SPEEDCHOICE_RUNNING_SHOES_FROM_START) {
+                LocalFieldData *localFieldData = Save_LocalFieldData_Get(data->saveData);
+                struct PlayerSaveData *sub     = LocalFieldData_GetPlayer(localFieldData);
+                PlayerSaveData_SetRunningShoesFlag(sub, TRUE);
+            }
             data->state       = OAK_SPEECH_MAIN_STATE_PRINT_TIME_OF_DAY_MSG;
             data->queuedMsgId = OakSpeech_GetTimeOfDayIntroMsg();
         }

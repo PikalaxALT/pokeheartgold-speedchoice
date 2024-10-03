@@ -210,7 +210,15 @@ scr_seq_T20R0101_012:
 	wait_button_or_walk_away
 	closemsg
 	setvar VAR_SCENE_ELMS_LAB, 1
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_no_set_scene
 	setvar VAR_SCENE_NEW_BARK_TOWN_OW, 1
+	goto .done_friendless
+
+.friendless_no_set_scene:
+	setvar VAR_SCENE_NEW_BARK_TOWN_OW, 2
+.done_friendless:
 	clearflag FLAG_ELMS_LAB_PREVENT_PLAYER_ESCAPE
 	releaseall
 	end
