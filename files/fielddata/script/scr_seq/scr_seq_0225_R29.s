@@ -317,7 +317,7 @@ _04DC:
 	hide_person obj_R29_tsure_poke_static_marill
 	setflag FLAG_HIDE_ROUTE_29_FRIEND
 	setflag FLAG_HIDE_ROUTE_29_MARILL
-	setvar VAR_UNK_408B, 0
+	setvar VAR_SCENE_ROUTE_29, 0
 	setflag FLAG_UNK_09A
 	releaseall
 	end
@@ -747,7 +747,7 @@ scr_seq_R29_002:
 	play_se SEQ_SE_DP_SELECT
 	lockall
 	faceplayer
-	scrcmd_379 VAR_SPECIAL_RESULT
+	get_time_of_day VAR_SPECIAL_RESULT
 	compare VAR_SPECIAL_RESULT, 0
 	goto_if_ne _0976
 	npc_msg msg_0373_R29_00012

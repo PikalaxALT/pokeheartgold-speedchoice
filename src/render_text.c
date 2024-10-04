@@ -138,7 +138,7 @@ RenderResult RenderText(TextPrinter *printer) {
         case EXT_CTRL_CODE_BEGIN:
             printer->template.currentChar.raw--;
             switch ((u16)MsgArray_GetControlCode(printer->template.currentChar.raw)) {
-            case 0xFF00:
+            case TX_CTRL_COLOR:
                 u16 field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 if (field == 0xff) {
                     u8 r2                   = printer->template.unk1B;
@@ -229,7 +229,7 @@ RenderResult RenderText(TextPrinter *printer) {
                 }
             } break;
 
-            case 0xFF01:
+            case TX_CTRL_SIZE:
                 field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
 
                 switch (field) {

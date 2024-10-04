@@ -107,7 +107,7 @@
       "sprite_id": "SPRITE_POLICEMAN",
       "movement": 16,
       "type": 1,
-      "flag": "FLAG_UNK_1D2",
+      "flag": "FLAG_HIDE_ROUTE_34_POLICEMAN_NITE",
       "scr": "std_trainer(TRAINER_POLICEMAN_KEITH)",
       "dirn": 2,
       "eye": 6,
@@ -209,7 +209,7 @@
       "sprite_id": "SPRITE_POLICEMAN",
       "movement": 16,
       "type": 0,
-      "flag": "FLAG_UNK_1D1",
+      "flag": "FLAG_HIDE_ROUTE_34_POLICEMAN_DAY",
       "scr": "_EV_scr_seq_R34_002 + 1",
       "dirn": 2,
       "eye": 0,
@@ -243,7 +243,7 @@
       "sprite_id": "SPRITE_VAR_1",
       "movement": 0,
       "type": 0,
-      "flag": "FLAG_UNK_22D",
+      "flag": "FLAG_HIDE_FRIEND_ROUTE_34",
       "scr": 0,
       "dirn": 0,
       "eye": 0,
@@ -260,7 +260,7 @@
       "sprite_id": "SPRITE_FOLLOWER_MON_STATIC_MARILL",
       "movement": 0,
       "type": 0,
-      "flag": "FLAG_UNK_22D",
+      "flag": "FLAG_HIDE_FRIEND_ROUTE_34",
       "scr": 0,
       "dirn": 0,
       "eye": 0,
@@ -356,7 +356,7 @@
       "h": 1,
       "z": 0,
       "val": 0,
-      "var": "VAR_UNK_408E"
+      "var": "VAR_SCENE_DAYCARE_INTRO"
     },
     {
       "scr": "_EV_scr_seq_R34_004 + 1",
@@ -366,7 +366,7 @@
       "h": 1,
       "z": 0,
       "val": 0,
-      "var": "VAR_UNK_4097"
+      "var": "VAR_SCENE_SOFTSAND_GIRLS"
     },
     {
       "scr": "_EV_scr_seq_R34_005 + 1",
@@ -376,7 +376,7 @@
       "h": 1,
       "z": 0,
       "val": 1,
-      "var": "VAR_UNK_4097"
+      "var": "VAR_SCENE_SOFTSAND_GIRLS"
     }
   ]
 }

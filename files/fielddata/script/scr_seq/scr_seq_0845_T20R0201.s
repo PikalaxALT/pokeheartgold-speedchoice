@@ -47,7 +47,18 @@ scr_seq_T20R0201_000:
 	apply_movement obj_T20R0201_gsmama, _00C8
 	wait_movement
 	callstd std_fade_end_mom_music
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	setvar VAR_SCENE_PLAYERS_HOUSE_1F, 1
+	releaseall
+	end
+
+.friendless:
+	setvar VAR_SCENE_PLAYERS_HOUSE_1F, 2
+	setvar VAR_SCENE_ROUTE_31_GATE, 1
+	setflag FLAG_HIDE_NEW_BARK_MARILL
+	setflag FLAG_HIDE_NEW_BARK_FRIEND
 	releaseall
 	end
 

@@ -88,7 +88,7 @@ scr_seq_0003_002:
 	compare VAR_SPECIAL_RESULT, 4
 	goto_if_ge _03E3
 	setvar VAR_SPECIAL_x8004, 0
-	scrcmd_379 VAR_SPECIAL_RESULT
+	get_time_of_day VAR_SPECIAL_RESULT
 	debugwatch VAR_SPECIAL_RESULT
 	setvar VAR_SPECIAL_x8004, 83
 	compare VAR_SPECIAL_RESULT, 0
@@ -386,7 +386,8 @@ _04F2:
 	end
 
 _0568:
-	play_fanfare SEQ_ME_ITEM
+	// play_fanfare SEQ_ME_ITEM
+	play_fanfare SEQ_ME_LVUP
 	return
 
 _056E:

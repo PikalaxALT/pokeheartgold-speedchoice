@@ -60,7 +60,7 @@ typedef struct TextPrinter {
     u8 id;
     u8 isWaiting;
     u16 waitSfx;
-    u16 *unk30;
+    u16 *screenFocusIndicatorTileGfx;
 } TextPrinter;
 
 typedef enum RenderResult {

@@ -21,7 +21,7 @@ scr_seq_0265_000:
 	goto_if_eq _0151
 	compare VAR_SPECIAL_RESULT, 3
 	goto_if_eq _015E
-	compare VAR_UNK_408E, 4
+	compare VAR_SCENE_DAYCARE_INTRO, 4
 	goto_if_eq _0057
 	npc_msg msg_0439_00000
 	wait_button_or_walk_away
@@ -68,10 +68,10 @@ _0094:
 	touchscreen_menu_show
 	clearflag FLAG_UNK_067
 	reset_day_care_egg
-	compare VAR_UNK_408E, 3
+	compare VAR_SCENE_DAYCARE_INTRO, 3
 	goto_if_ne _00EB
 	npc_msg msg_0439_00012
-	setvar VAR_UNK_408E, 4
+	setvar VAR_SCENE_DAYCARE_INTRO, 4
 	setflag FLAG_UNK_992
 	goto _0057
 
@@ -100,10 +100,10 @@ _0114:
 	wait_fanfare
 	give_day_care_egg
 	clearflag FLAG_UNK_067
-	compare VAR_UNK_408E, 3
+	compare VAR_SCENE_DAYCARE_INTRO, 3
 	goto_if_ne _0146
 	npc_msg msg_0439_00011
-	setvar VAR_UNK_408E, 4
+	setvar VAR_SCENE_DAYCARE_INTRO, 4
 	setflag FLAG_UNK_992
 	goto _0057
 
@@ -136,7 +136,7 @@ _015E:
 	end
 
 _0196:
-	compare VAR_UNK_408E, 4
+	compare VAR_SCENE_DAYCARE_INTRO, 4
 	goto_if_ne _01B2
 	npc_msg msg_0439_00047
 	goto _0057
@@ -153,7 +153,7 @@ _01B5:
 	end
 
 _01BD:
-	compare VAR_UNK_408E, 4
+	compare VAR_SCENE_DAYCARE_INTRO, 4
 	goto_if_ne _01D9
 	npc_msg msg_0439_00048
 	goto _0057
@@ -170,7 +170,7 @@ _01DC:
 	end
 
 _01E4:
-	compare VAR_UNK_408E, 4
+	compare VAR_SCENE_DAYCARE_INTRO, 4
 	goto_if_ne _0200
 	npc_msg msg_0439_00049
 	goto _0057
@@ -187,7 +187,7 @@ _0203:
 	end
 
 _020B:
-	compare VAR_UNK_408E, 4
+	compare VAR_SCENE_DAYCARE_INTRO, 4
 	goto_if_ne _0227
 	npc_msg msg_0439_00050
 	goto _0057

@@ -280,5 +280,7 @@
 #define TX_CTRL_ALN_RIGHT  0x206
 #define TX_CTRL_UNK_207    0x207
 #define TX_CTRL_UNK_208    0x208
+#define TX_CTRL_COLOR      0xFF00
+#define TX_CTRL_SIZE       0xFF01
 
 #endif // POKEHEARTGOLD_CONSTANTS_CHARCODE_H

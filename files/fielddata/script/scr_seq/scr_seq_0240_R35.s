@@ -31,7 +31,7 @@ _0027:
 _005C:
 	clearflag FLAG_HIDE_CAMERON
 _0060:
-	scrcmd_379 VAR_TEMP_x4000
+	get_time_of_day VAR_TEMP_x4000
 	compare VAR_TEMP_x4000, 3
 	goto_if_eq _0088
 	compare VAR_TEMP_x4000, 4

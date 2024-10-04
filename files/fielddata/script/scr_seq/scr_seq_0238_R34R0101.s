@@ -79,8 +79,8 @@ _00CA:
 	hide_person obj_R34R0101_var_1
 	hide_person obj_R34R0101_tsure_poke_static_marill
 	wait_se SEQ_SE_DP_KAIDAN2
-	setvar VAR_UNK_408E, 2
-	setflag FLAG_UNK_22D
+	setvar VAR_SCENE_DAYCARE_INTRO, 2
+	setflag FLAG_HIDE_FRIEND_ROUTE_34
 	releaseall
 	end
 

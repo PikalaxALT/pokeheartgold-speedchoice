@@ -51,18 +51,18 @@ _009F:
 _00A9:
 	clearflag FLAG_HIDE_CAMERON
 _00AD:
-	scrcmd_379 VAR_TEMP_x4000
+	get_time_of_day VAR_TEMP_x4000
 	compare VAR_TEMP_x4000, 3
 	goto_if_eq _00D5
 	compare VAR_TEMP_x4000, 4
 	goto_if_eq _00D5
-	clearflag FLAG_UNK_1D1
-	setflag FLAG_UNK_1D2
+	clearflag FLAG_HIDE_ROUTE_34_POLICEMAN_DAY
+	setflag FLAG_HIDE_ROUTE_34_POLICEMAN_NITE
 	end
 
 _00D5:
-	clearflag FLAG_UNK_1D2
-	setflag FLAG_UNK_1D1
+	clearflag FLAG_HIDE_ROUTE_34_POLICEMAN_NITE
+	setflag FLAG_HIDE_ROUTE_34_POLICEMAN_DAY
 	end
 
 scr_seq_R34_001:
@@ -85,7 +85,7 @@ scr_seq_R34_001:
 	closemsg
 	apply_movement obj_R34_gsoldman1, _014C
 	wait_movement
-	setvar VAR_UNK_408E, 3
+	setvar VAR_SCENE_DAYCARE_INTRO, 3
 	releaseall
 	end
 
@@ -112,6 +112,9 @@ _014C:
 scr_seq_R34_003:
 	scrcmd_609
 	lockall
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	gender_msgbox msg_0384_R34_00036, msg_0384_R34_00041
 	closemsg
 	apply_movement obj_R34_gsoldman1, _0510
@@ -284,11 +287,27 @@ _0455:
 	wait_se SEQ_SE_DP_KAIDAN2
 	wait_fade
 	scrcmd_309 77
-	setvar VAR_UNK_408E, 1
+	setvar VAR_SCENE_DAYCARE_INTRO, 1
 	warp MAP_R34R0101, 0, 3, 12, DIR_NORTH
 	scrcmd_582 MAP_R34, 368, 411
 	fade_screen 6, 1, 1, RGB_BLACK
 	wait_fade
+	releaseall
+	end
+
+.friendless:
+	setflag FLAG_HIDE_FRIEND_ROUTE_34
+	buffer_players_name 0
+	register_gear_number PHONE_CONTACT_DAY_C_MAN
+	npc_msg msg_0384_R34_00047
+	play_fanfare SEQ_ME_POKEGEAR_REGIST
+	wait_fanfare
+	register_gear_number PHONE_CONTACT_DAY_C_LADY
+	npc_msg msg_0384_R34_00048
+	play_fanfare SEQ_ME_POKEGEAR_REGIST
+	wait_fanfare
+	closemsg
+	setvar VAR_SCENE_DAYCARE_INTRO, 3
 	releaseall
 	end
 
@@ -689,7 +708,7 @@ _087D:
 	wait_button_or_walk_away
 	closemsg
 _0908:
-	setvar VAR_UNK_4097, 1
+	setvar VAR_SCENE_SOFTSAND_GIRLS, 1
 	releaseall
 	end
 
@@ -751,12 +770,12 @@ scr_seq_R34_005:
 	check_battle_won VAR_SPECIAL_RESULT
 	compare VAR_SPECIAL_RESULT, 0
 	goto_if_eq _0912
-	setvar VAR_UNK_4097, 2
+	setvar VAR_SCENE_SOFTSAND_GIRLS, 2
 _09A0:
 	npc_msg msg_0384_R34_00030
 	goto_if_no_item_space ITEM_POWER_HERB, 1, _09EE
 	callstd std_give_item_verbose
-	setvar VAR_UNK_4097, 3
+	setvar VAR_SCENE_SOFTSAND_GIRLS, 3
 	npc_msg msg_0384_R34_00032
 	wait_button_or_walk_away
 	closemsg
@@ -781,7 +800,7 @@ scr_seq_R34_006:
 	play_se SEQ_SE_DP_SELECT
 	lockall
 	faceplayer
-	compare VAR_UNK_4097, 1
+	compare VAR_SCENE_SOFTSAND_GIRLS, 1
 	goto_if_ne _0A1A
 	npc_msg msg_0384_R34_00022
 	goto _0A1D
@@ -798,7 +817,7 @@ scr_seq_R34_007:
 	play_se SEQ_SE_DP_SELECT
 	lockall
 	faceplayer
-	compare VAR_UNK_4097, 1
+	compare VAR_SCENE_SOFTSAND_GIRLS, 1
 	goto_if_ne _0A43
 	npc_msg msg_0384_R34_00026
 	goto _0A46
@@ -816,7 +835,7 @@ scr_seq_R34_008:
 	lockall
 	faceplayer
 	setvar VAR_TEMP_x4004, 555
-	compare VAR_UNK_4097, 2
+	compare VAR_SCENE_SOFTSAND_GIRLS, 2
 	goto_if_eq _09A0
 	npc_msg msg_0384_R34_00032
 	wait_button_or_walk_away

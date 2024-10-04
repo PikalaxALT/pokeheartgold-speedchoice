@@ -33,7 +33,7 @@ _004D:
 	end
 
 _004F:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 3
 	goto_if_ne _0086
 	move_warp 1, 1, 7
@@ -49,7 +49,7 @@ _008C:
 	end
 
 _008E:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 4
 	goto_if_ne _00C5
 	move_warp 1, 1, 7

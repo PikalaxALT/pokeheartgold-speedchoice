@@ -38,7 +38,7 @@ _005E:
 	end
 
 _0060:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 3
 	goto_if_eq _009A
 	setvar VAR_UNK_40F6, 1
@@ -46,7 +46,7 @@ _0060:
 	end
 
 _007D:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 4
 	goto_if_eq _009A
 	setvar VAR_UNK_40F6, 1
@@ -92,13 +92,13 @@ _00E2:
 	end
 
 _0113:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 3
 	goto_if_eq _0141
 	goto _00E2
 
 _012A:
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 4
 	goto_if_eq _0141
 	goto _00E2

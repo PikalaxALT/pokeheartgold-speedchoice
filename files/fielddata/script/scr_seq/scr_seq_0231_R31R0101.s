@@ -137,7 +137,7 @@ _0253:
 	move_person_facing obj_R31R0101_tsure_poke_static_marill, 12, 0, 28, DIR_NORTH
 	callstd std_fade_end_friend_music
 	releaseall
-	setvar VAR_UNK_4132, 1
+	setvar VAR_SCENE_ROUTE_31_GATE, 1
 	end
 
 	.balign 4, 0

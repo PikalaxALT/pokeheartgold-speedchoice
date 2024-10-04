@@ -13,7 +13,7 @@
 	scrdef_end
 
 scr_seq_R39R0201_004:
-	scrcmd_379 VAR_TEMP_x4000
+	get_time_of_day VAR_TEMP_x4000
 	compare VAR_TEMP_x4000, 0
 	goto_if_eq _0047
 	compare VAR_TEMP_x4000, 1

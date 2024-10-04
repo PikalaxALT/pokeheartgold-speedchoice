@@ -12,7 +12,7 @@
 
 scr_seq_D02R0103_002:
 	make_object_visible obj_D02R0103_stop
-	scrcmd_379 VAR_TEMP_x4001
+	get_time_of_day VAR_TEMP_x4001
 	compare VAR_TEMP_x4001, 3
 	goto_if_ne _003D
 	move_person_facing obj_D02R0103_stop, 18, 0, 10, DIR_SOUTH

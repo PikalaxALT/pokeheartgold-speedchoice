@@ -53,12 +53,16 @@ scr_seq_T20_009:
 	end
 
 _00A4:
+	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
+	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	clearflag FLAG_HIDE_NEW_BARK_FRIEND
 	show_person obj_T20_var_1
 	clearflag FLAG_HIDE_NEW_BARK_MARILL
 	show_person obj_T20_tsure_poke_static_marill
 	move_person_facing obj_T20_var_1, 686, 0, 396, DIR_WEST
 	move_person_facing obj_T20_tsure_poke_static_marill, 685, 0, 396, DIR_SOUTH
+.friendless:
 	end
 
 scr_seq_T20_000:

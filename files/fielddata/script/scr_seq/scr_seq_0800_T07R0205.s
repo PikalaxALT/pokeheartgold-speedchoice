@@ -14,7 +14,7 @@ scr_seq_T07R0205_000:
 	faceplayer
 	goto_if_set FLAG_GOT_SPELL_TAG_FROM_CELADON_CITY_MAN, _0071
 	npc_msg msg_0505_T07R0205_00000
-	scrcmd_379 VAR_TEMP_x4000
+	get_time_of_day VAR_TEMP_x4000
 	compare VAR_TEMP_x4000, 3
 	goto_if_eq _0045
 	compare VAR_TEMP_x4000, 4
