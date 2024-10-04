@@ -261,11 +261,24 @@
 #define CHAR_ONE_DOT  491
 #define CHAR_TWO_DOTS 492
 
+#define CHAR_CR   0x25BC
+#define CHAR_PARA 0x25BD
+
 #define CHAR_LF             0xE000
 #define TRNAMECODE          0xF100
 #define EXT_CTRL_CODE_BEGIN 0xFFFE
 #define EOS                 0xFFFF // _EOM
 #define TRNAME_MASK         0x1FF
 #define EOS_TRNAME          0x1FF
+
+#define TX_CTRL_YESNO      0x200
+#define TX_CTRL_PAUSE      0x201
+#define TX_CTRL_WAIT       0x202
+#define TX_CTRL_CURSOR_X   0x203
+#define TX_CTRL_CURSOR_Y   0x204
+#define TX_CTRL_ALN_CENTER 0x205
+#define TX_CTRL_ALN_RIGHT  0x206
+#define TX_CTRL_UNK_207    0x207
+#define TX_CTRL_UNK_208    0x208
 
 #endif // POKEHEARTGOLD_CONSTANTS_CHARCODE_H

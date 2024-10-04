@@ -44,7 +44,7 @@ static void BattleMessage_BufferTrainerClass(BattleSystem *bsys, int bufferIndex
 static void BattleMessage_BufferTrainerName(BattleSystem *bsys, int bufferIndex, int param);
 static void BattleMessage_BufferBoxName(BattleSystem *bsys, int bufferIndex, int param);
 static void BattleMessage_ExpandPlaceholders(BattleSystem *bsys, MsgData *data, BattleMessage *msg);
-static BOOL ov12_0223CF14(struct TextPrinterTemplate *template, u16 glyphId);
+static BOOL BattleSystemTextPrinterCB(struct TextPrinterTemplate *template, u16 glyphId);
 
 BgConfig *BattleSystem_GetBgConfig(BattleSystem *bsys) {
     return bsys->bgConfig;
@@ -1376,7 +1376,7 @@ u8 BattleSystem_PrintTrainerMessage(BattleSystem *bsys, int trainerId, int battl
             }
             FillWindowPixelBuffer(window, 0xFF);
             String_Copy(bsys->msgBuffer, msg);
-            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, BattleSystemTextPrinterCB);
             String_Delete(msg);
         } else {
             MsgData *data;
@@ -1407,14 +1407,14 @@ u8 BattleSystem_PrintTrainerMessage(BattleSystem *bsys, int trainerId, int battl
             msg  = NewString_ReadMsgData(data, stringId);
             FillWindowPixelBuffer(window, 0xFF);
             String_Copy(bsys->msgBuffer, msg);
-            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, BattleSystemTextPrinterCB);
             String_Delete(msg);
             DestroyMsgData(data);
         }
     } else {
         GetTrainerMessageByIdPair(trainerId, a2, bsys->msgBuffer, HEAP_ID_BATTLE);
         FillWindowPixelBuffer(window, 0xFF);
-        index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+        index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, BattleSystemTextPrinterCB);
     }
     return index;
 }
@@ -1425,7 +1425,7 @@ u32 BattleSystem_PrintBattleMessage(BattleSystem *bsys, MsgData *data, BattleMes
     BattleSystem_BufferMessage(bsys, msg);
     BattleMessage_ExpandPlaceholders(bsys, data, msg);
     FillWindowPixelBuffer(window, 0xFF);
-    return AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+    return AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, BattleSystemTextPrinterCB);
 }
 
 u32 ov12_0223C4E8(BattleSystem *bsys, Window *window, MsgData *data, BattleMessage *msg, int x, int y, int flag, int width, int delay) {
@@ -1445,7 +1445,7 @@ u32 ov12_0223C4E8(BattleSystem *bsys, Window *window, MsgData *data, BattleMessa
         dx = 0;
     }
 
-    return AddTextPrinterParameterized(window, 0, bsys->msgBuffer, x + dx, y, delay, ov12_0223CF14);
+    return AddTextPrinterParameterized(window, 0, bsys->msgBuffer, x + dx, y, delay, BattleSystemTextPrinterCB);
 }
 
 static void BattleSystem_AdjustMessageForSide(BattleSystem *bsys, BattleMessage *msg) {
@@ -1933,7 +1933,7 @@ static void BattleMessage_ExpandPlaceholders(BattleSystem *bsys, MsgData *data, 
     String_Delete(str);
 }
 
-static BOOL ov12_0223CF14(struct TextPrinterTemplate *template, u16 glyphId) {
+static BOOL BattleSystemTextPrinterCB(struct TextPrinterTemplate *template, u16 glyphId) {
     BOOL ret = FALSE;
 
     switch (glyphId) {

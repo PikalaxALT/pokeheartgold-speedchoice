@@ -4,10 +4,12 @@
 
 #include "heap.h"
 #include "math_util.h"
+#include "render_text.h"
 #include "save_arrays.h"
 #include "save_data_read_error.h"
 #include "save_data_write_error.h"
 #include "save_misc_data.h"
+#include "save_speedchoice.h"
 #include "system.h"
 #include "unk_0202C034.h"
 
@@ -168,6 +170,8 @@ BOOL SaveData_TryLoadOnContinue(SaveData *saveData) {
         saveData->isNewGame      = FALSE;
         Save_CheckFrontierData(saveData, &sp4, &sp0);
         Save_ResetPCBoxModifiedFlags(saveData);
+        // Speedchoice change
+        TextFlags_SetHoldToMash(Speedchoice_GetAttr(Save_Speedchoice_Get(saveData), SPEEDCHOICE_HOLD_TO_MASH) == SPEEDCHOICE_HOLD_TO_MASH_YES);
         return TRUE;
     }
     return FALSE;

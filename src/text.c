@@ -158,7 +158,7 @@ static u8 AddTextPrinter(TextPrinterTemplate *template, u32 speed, PrinterCallba
     printer->textSpeedBottom = speed;
     printer->delayCounter    = 0;
     printer->scrollDistance  = 0;
-    printer->unk2D           = 0;
+    printer->isWaiting       = 0;
     for (int i = 0; i < 7; i++) {
         printer->subStructFields[i] = 0;
     }
@@ -212,9 +212,9 @@ static void RunTextPrinter(SysTask *task, TextPrinter *printer) {
 
     RenderResult renderResult;
     BOOL isInstantText = TextPrinter_IsInstantText(printer);
-    do {
-        if (printer->unk2D == 0) {
-            printer->unk2E = 0;
+    if (printer->isWaiting == 0) {
+        do {
+            printer->waitSfx = 0;
 
             GenerateFontHalfRowLookupTable(printer->template.fgColor, printer->template.bgColor, printer->template.shadowColor);
 
@@ -227,7 +227,7 @@ static void RunTextPrinter(SysTask *task, TextPrinter *printer) {
                 // fallthrough
             case RENDER_UPDATE:
                 if (printer->callback != NULL) {
-                    printer->unk2D = printer->callback(&printer->template, printer->unk2E);
+                    printer->isWaiting = printer->callback(&printer->template, printer->waitSfx);
                 }
                 if (renderResult == RENDER_UPDATE) {
                     isInstantText = FALSE;
@@ -237,10 +237,10 @@ static void RunTextPrinter(SysTask *task, TextPrinter *printer) {
                 DestroyTextPrinterSysTask(printer->id);
                 return;
             }
-        } else {
-            printer->unk2D = printer->callback(&printer->template, printer->unk2E);
-        }
-    } while (isInstantText);
+        } while (isInstantText);
+    } else {
+        printer->isWaiting = printer->callback(&printer->template, printer->waitSfx);
+    }
 }
 
 static RenderResult RenderFont(TextPrinter *printer) {

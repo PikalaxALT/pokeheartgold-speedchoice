@@ -58,8 +58,8 @@ typedef struct TextPrinter {
     u8 delayCounter;
     u8 scrollDistance;
     u8 id;
-    u8 unk2D;
-    u16 unk2E;
+    u8 isWaiting;
+    u16 waitSfx;
     u16 *unk30;
 } TextPrinter;
 

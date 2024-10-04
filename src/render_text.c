@@ -12,6 +12,18 @@
 #include "touchscreen.h"
 #include "unk_02005D10.h"
 
+typedef enum {
+    TP_STATE_PARSE,
+    TP_STATE_WAITBUTTON,
+    TP_STATE_WAITBUTTON_PARA,
+    TP_STATE_WAITBUTTON_SCROLL,
+    TP_STATE_SCROLL,
+    TP_STATE_5,
+    TP_STATE_PAUSE,
+    TP_STATE_7,
+    TP_STATE_8,
+} TextPrinterState;
+
 static u16 sDownArrowBaseTile;
 static TextFlags sTextFlags;
 static TouchscreenHitbox sTouchScreenHitbox;
@@ -82,7 +94,7 @@ RenderResult RenderText(TextPrinter *printer) {
     u16 currentChar;
 
     switch (printer->state) {
-    case 0:
+    case TP_STATE_PARSE:
         if (TextPrinter_ContinueInputHeld(subStruct)) {
             printer->delayCounter = 0;
             if (printer->textSpeedBottom != 0) {
@@ -127,8 +139,7 @@ RenderResult RenderText(TextPrinter *printer) {
             printer->template.currentChar.raw--;
             switch ((u16)MsgArray_GetControlCode(printer->template.currentChar.raw)) {
             case 0xFF00:
-                u16 field = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+                u16 field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 if (field == 0xff) {
                     u8 r2                   = printer->template.unk1B;
                     printer->template.unk1B = ((printer->template.fgColor - 1) / 2 + 100);
@@ -154,9 +165,8 @@ RenderResult RenderText(TextPrinter *printer) {
 
                 break;
 
-            case 0x200:
-                field = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+            case TX_CTRL_YESNO:
+                field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
 
                 RenderScreenFocusIndicatorTile(printer,
                     printer->template.currentX,
@@ -167,44 +177,40 @@ RenderResult RenderText(TextPrinter *printer) {
                 }
 
                 break;
-            case 0x207:
-                printer->state = 7;
+            case TX_CTRL_UNK_207:
+                printer->state = TP_STATE_7;
                 TextPrinter_InitDownArrowCounters(printer);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
-                if (*printer->template.currentChar.raw == 0xE000) {
+                if (*printer->template.currentChar.raw == CHAR_LF) {
                     ++printer->template.currentChar.raw;
                 }
                 return RENDER_UPDATE;
-            case 0x208:
-                printer->state = 8;
+            case TX_CTRL_UNK_208:
+                printer->state = TP_STATE_8;
                 TextPrinter_InitDownArrowCounters(printer);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
-                if (*printer->template.currentChar.raw == 0xE000) {
+                if (*printer->template.currentChar.raw == CHAR_LF) {
                     ++printer->template.currentChar.raw;
                 }
                 return RENDER_UPDATE;
-            case 0x201:
-                printer->delayCounter = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+            case TX_CTRL_PAUSE:
+                printer->delayCounter             = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
-                printer->state                    = 6;
+                printer->state                    = TP_STATE_PAUSE;
 
                 return RENDER_UPDATE;
-            case 0x202:
-                printer->unk2E = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+            case TX_CTRL_WAIT:
+                printer->waitSfx                  = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
 
                 return RENDER_UPDATE;
-            case 0x203:
-                printer->template.currentX = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+            case TX_CTRL_CURSOR_X:
+                printer->template.currentX = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 break;
-            case 0x204:
-                printer->template.currentY = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+            case TX_CTRL_CURSOR_Y:
+                printer->template.currentY = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
                 break;
-            case 0x205: {
+            case TX_CTRL_ALN_CENTER: {
                 int x     = GetWindowWidth(printer->template.window) * 8;
                 int width = FontID_FlatArray_GetWidthFirstLine(printer->template.fontId, printer->template.currentChar.raw, printer->template.letterSpacing);
                 if (width < x) {
@@ -213,7 +219,7 @@ RenderResult RenderText(TextPrinter *printer) {
                     printer->template.currentX = printer->template.x;
                 }
             } break;
-            case 0x206: {
+            case TX_CTRL_ALN_RIGHT: {
                 int x     = GetWindowWidth(printer->template.window) * 8;
                 int width = FontID_FlatArray_GetWidthFirstLine(printer->template.fontId, printer->template.currentChar.raw, printer->template.letterSpacing);
                 if (width < x) {
@@ -224,8 +230,7 @@ RenderResult RenderText(TextPrinter *printer) {
             } break;
 
             case 0xFF01:
-                field = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
+                field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
 
                 switch (field) {
                 case 100:
@@ -241,38 +246,35 @@ RenderResult RenderText(TextPrinter *printer) {
                 break;
 
             case 0xFE06:
-                field = MsgArray_ControlCodeGetField(
-                    printer->template.currentChar.raw, 0);
-                if (field != 0xFE00) {
-                    if (field != 0xFE01) {
-                        break;
-                    }
+                field = MsgArray_ControlCodeGetField(printer->template.currentChar.raw, 0);
 
-                    printer->state = 2;
+                switch (field) {
+                case 0xFE01:
+                    printer->state = TP_STATE_WAITBUTTON_PARA;
                     TextPrinter_InitDownArrowCounters(printer);
-                    printer->template.currentChar.raw = MsgArray_SkipControlCode(
-                        printer->template.currentChar.raw);
+                    printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
+
+                    return RENDER_UPDATE;
+                case 0xFE00:
+                    printer->state = TP_STATE_WAITBUTTON_SCROLL;
+                    TextPrinter_InitDownArrowCounters(printer);
+                    printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
 
                     return RENDER_UPDATE;
                 }
-
-                printer->state = 3;
-                TextPrinter_InitDownArrowCounters(printer);
-                printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
-
-                return RENDER_UPDATE;
+                break;
             }
 
             printer->template.currentChar.raw = MsgArray_SkipControlCode(printer->template.currentChar.raw);
             return RENDER_REPEAT;
 
-        case 0x25BC:
-            printer->state = 2;
+        case CHAR_CR:
+            printer->state = TP_STATE_WAITBUTTON_PARA;
             TextPrinter_InitDownArrowCounters(printer);
             return RENDER_UPDATE;
 
-        case 0x25BD:
-            printer->state = 3;
+        case CHAR_PARA:
+            printer->state = TP_STATE_WAITBUTTON_SCROLL;
             TextPrinter_InitDownArrowCounters(printer);
             return RENDER_UPDATE;
         }
@@ -289,35 +291,34 @@ RenderResult RenderText(TextPrinter *printer) {
         printer->template.currentX += glyphInfo->width + printer->template.letterSpacing;
 
         return RENDER_PRINT;
-    case 1:
+    case TP_STATE_WAITBUTTON:
         if (TextPrinter_Wait(printer) != 0) {
             TextPrinter_ClearDownArrow(printer);
 
-            printer->state = 0;
+            printer->state = TP_STATE_PARSE;
         }
 
         return RENDER_UPDATE;
-    case 2:
+    case TP_STATE_WAITBUTTON_PARA:
         if (TextPrinter_WaitWithDownArrow(printer) != 0) {
             TextPrinter_ClearDownArrow(printer);
-            FillWindowPixelBuffer(
-                printer->template.window, printer->template.bgColor);
+            FillWindowPixelBuffer(printer->template.window, printer->template.bgColor);
             printer->template.currentX = printer->template.x;
             printer->template.currentY = printer->template.y;
-            printer->state             = 0;
+            printer->state             = TP_STATE_PARSE;
         }
 
         return RENDER_UPDATE;
-    case 3:
+    case TP_STATE_WAITBUTTON_SCROLL:
         if (TextPrinter_WaitWithDownArrow(printer) != 0) {
             TextPrinter_ClearDownArrow(printer);
             printer->scrollDistance    = (GetFontAttribute(printer->template.fontId, 1) + printer->template.lineSpacing);
             printer->template.currentX = printer->template.x;
-            printer->state             = 4;
+            printer->state             = TP_STATE_SCROLL;
         }
 
         return RENDER_UPDATE;
-    case 4:
+    case TP_STATE_SCROLL:
         if (printer->scrollDistance != 0) {
             if ((int)printer->scrollDistance < 4) {
                 ScrollWindow(printer->template.window,
@@ -336,37 +337,37 @@ RenderResult RenderText(TextPrinter *printer) {
 
             CopyWindowToVram(printer->template.window);
         } else {
-            printer->state = 0;
+            printer->state = TP_STATE_PARSE;
         }
 
         return RENDER_UPDATE;
-    case 5:
-        printer->state = 0;
+    case TP_STATE_5:
+        printer->state = TP_STATE_PARSE;
         return RENDER_UPDATE;
-    case 6:
+    case TP_STATE_PAUSE:
         if (printer->delayCounter != 0) {
             printer->delayCounter--;
         } else {
-            printer->state = 0;
+            printer->state = TP_STATE_PARSE;
         }
 
         return RENDER_UPDATE;
 
-    case 7:
+    case TP_STATE_7:
         if (TextPrinter_WaitWithDownArrow(printer)) {
             TextPrinter_ClearDownArrow(printer);
             FillWindowPixelBuffer(printer->template.window, printer->template.bgColor);
             printer->template.currentX = printer->template.x;
             printer->template.currentY = printer->template.y;
-            printer->state             = 0;
+            printer->state             = TP_STATE_PARSE;
         }
         return RENDER_UPDATE;
-    case 8:
+    case TP_STATE_8:
         if (TextPrinter_WaitWithDownArrow(printer)) {
             TextPrinter_ClearDownArrow(printer);
             printer->scrollDistance    = printer->template.lineSpacing + GetFontAttribute(printer->template.fontId, 1);
             printer->template.currentX = printer->template.x;
-            printer->state             = 4;
+            printer->state             = TP_STATE_SCROLL;
         }
         return RENDER_UPDATE;
     }
@@ -507,7 +508,7 @@ static BOOL TextPrinter_WaitAutoMode(TextPrinter *printer) {
     }
 
     subStruct->autoScrollDelay++;
-    if (sTextFlags.autoScrollCanSpeedUp) {
+    if (sTextFlags.autoScrollCanSpeedUp || sTextFlags.holdToMash) {
         return TextPrinter_Continue(printer);
     }
 
