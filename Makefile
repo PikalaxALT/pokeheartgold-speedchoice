@@ -25,8 +25,9 @@ BANNER          := $(ROM:%.nds=%.bnr)
 BANNER_SPEC     := $(buildname)/banner.bsf
 ICON_PNG        := $(buildname)/icon.png
 HEADER_TEMPLATE := $(buildname)/rom_header_template.sbin
+PATCH           := $(ROM:%.nds=%.xdelta)
 
-.PHONY: main sub libsyscall sdk sdk9 sdk7
+.PHONY: main sub libsyscall sdk sdk9 sdk7 patch
 .PRECIOUS: $(ROM)
 
 MAKEFLAGS += --no-print-directory
@@ -35,6 +36,11 @@ all:
 	$(MAKE) tools
 	$(MAKE) patch_mwasmarm
 	$(MAKE) $(ROM)
+
+patch: $(PATCH)
+
+$(PATCH): baserom.nds $(ROM)
+	$(XDELTA) -f -e -s $^ $@
 
 tidy:
 	@$(MAKE) -C lib/syscall tidy
