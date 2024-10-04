@@ -19,6 +19,7 @@
 #include "msgdata.h"
 #include "party.h"
 #include "pokemon_mood.h"
+#include "save_speedchoice.h"
 #include "text.h"
 #include "unk_02005D10.h"
 #include "unk_0200FA24.h"
@@ -1956,4 +1957,8 @@ static BOOL ov12_0223CF14(struct TextPrinterTemplate *template, u16 glyphId) {
     }
 
     return ret;
+}
+
+void BattleSystem_Speedchoice_Init(BattleSystem *bsys, BattleSetup *setup) {
+    bsys->hpBarMode = Speedchoice_GetAttr(Save_Speedchoice_Get(setup->saveData), SPEEDCHOICE_HEALTH_BARS);
 }

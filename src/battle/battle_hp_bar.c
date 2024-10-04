@@ -2,6 +2,8 @@
 
 #include "global.h"
 
+#include "constants/speedchoice.h"
+
 #include "battle/battle_system.h"
 #include "msgdata/msg/msg_0197.h"
 
@@ -19,11 +21,7 @@ typedef enum HPBarType {
     HP_BAR_TYPE_PALPARK,
 } HPBarType;
 
-#ifdef FAST_HP_BARS
-#define USE_SUBPIXELS_TEST (TRUE)
-#else
-#define USE_SUBPIXELS_TEST (maxHp < pixelsWide)
-#endif // FAST_HP_BARS
+#define USE_SUBPIXELS_TEST (hpBarMode == SPEEDCHOICE_HEALTH_BARS_VANILLA ? maxHp < pixelsWide : TRUE)
 
 ALIGN(4)
 static const s8 sHpBarArrowXOffsets[] = {
@@ -276,8 +274,8 @@ static void BattleHpBar_PrintSafariOrParkBallsString(BattleHpBar *hpBar, u32 fla
 static void BattleHpBar_PrintNumRemainingSafariOrParkBalls(BattleHpBar *hpBar, u32 flag);
 static int ov12_022657E4(BattleHpBar *hpBar, BOOL isExp);
 static void ov12_02265878(BattleHpBar *hpBar, u8 isExp);
-static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 deltaHp, s32 *pHpCalc, u8 tilesWide, u16 hpChange);
-static u8 BattleHpBar_Util_MakeHpBarPixelBuffer(s32 maxHp, s32 hp, s32 deltaHp, s32 *pHpCalc, u8 *pixelBuf, u8 tilesWide);
+static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 deltaHp, s32 *pHpCalc, u8 tilesWide, u16 hpChange, int hpBarMode);
+static u8 BattleHpBar_Util_MakeHpBarPixelBuffer(s32 maxHp, s32 hp, s32 deltaHp, s32 *pHpCalc, u8 *pixelBuf, u8 tilesWide, int hpBarMode);
 static u32 BattleHpBar_Util_GetPixelsToGain(s32 exp, s32 gainedExp, s32 maxExp, u8 tilesWide);
 static const u8 *BattleHpBar_Util_GetComponentRawGraphic(int componentId);
 static const UnkTemplate_0200D748 *BattleHpBar_Util_GetHpBoxSpriteTemplate(u8 barType);
@@ -1381,14 +1379,14 @@ static void BattleHpBar_PrintNumRemainingSafariOrParkBalls(BattleHpBar *hpBar, u
 static int ov12_022657E4(BattleHpBar *hpBar, BOOL isExp) {
     int ret;
     if (isExp == FALSE) {
-        ret = BattleHpBar_CalculatePixelsChangeFrame(hpBar->maxHp, hpBar->hp, hpBar->gainedHp, &hpBar->hpCalc, 6, 1);
+        ret = BattleHpBar_CalculatePixelsChangeFrame(hpBar->maxHp, hpBar->hp, hpBar->gainedHp, &hpBar->hpCalc, 6, 1, hpBar->bsys->hpBarMode);
     } else {
         // Supposedly this will make the exp bar move at a consistent speed regardless of the gauge size.
         int denom = BattleHpBar_Util_GetPixelsToGain(hpBar->exp, hpBar->gainedExp, hpBar->maxExp, 12);
         if (denom == 0) {
             denom = 1;
         }
-        ret = BattleHpBar_CalculatePixelsChangeFrame(hpBar->maxExp, hpBar->exp, hpBar->gainedExp, &hpBar->expCalc, 12, abs(hpBar->gainedExp / denom));
+        ret = BattleHpBar_CalculatePixelsChangeFrame(hpBar->maxExp, hpBar->exp, hpBar->gainedExp, &hpBar->expCalc, 12, abs(hpBar->gainedExp / denom), hpBar->bsys->hpBarMode);
     }
     if (isExp != FALSE || hpBar->unk_4F_3 != TRUE) {
         ov12_02265878(hpBar, isExp);
@@ -1418,7 +1416,7 @@ static void ov12_02265878(BattleHpBar *hpBar, u8 isExp) {
     switch (isExp) {
     case FALSE:
         // hp
-        switch (HpBar_GetColorIdx(BattleHpBar_Util_MakeHpBarPixelBuffer(hpBar->maxHp, hpBar->hp, hpBar->gainedHp, &hpBar->hpCalc, pixelBuffer, 6), 0x30)) {
+        switch (HpBar_GetColorIdx(BattleHpBar_Util_MakeHpBarPixelBuffer(hpBar->maxHp, hpBar->hp, hpBar->gainedHp, &hpBar->hpCalc, pixelBuffer, 6, hpBar->bsys->hpBarMode), 0x30)) {
         case 3: // Green
             tmp = 2;
             break;
@@ -1442,7 +1440,7 @@ static void ov12_02265878(BattleHpBar *hpBar, u8 isExp) {
         break;
     case TRUE:
         // exp
-        BattleHpBar_Util_MakeHpBarPixelBuffer(hpBar->maxExp, hpBar->exp, hpBar->gainedExp, &hpBar->expCalc, pixelBuffer, 12);
+        BattleHpBar_Util_MakeHpBarPixelBuffer(hpBar->maxExp, hpBar->exp, hpBar->gainedExp, &hpBar->expCalc, pixelBuffer, 12, hpBar->bsys->hpBarMode);
         if (hpBar->level == 100) {
             // Don't fill an exp bar for a level 100 mon
             for (i = 0; i < 12; ++i) {
@@ -1461,7 +1459,7 @@ static void ov12_02265878(BattleHpBar *hpBar, u8 isExp) {
     }
 }
 
-static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 deltaHp, s32 *pHpCalc, u8 tilesWide, u16 hpChange) {
+static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 deltaHp, s32 *pHpCalc, u8 tilesWide, u16 hpChange, int hpBarMode) {
     s32 nowHp;
     s32 ret;
     u8 pixelsWide;
@@ -1484,6 +1482,10 @@ static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 delt
     }
     if (USE_SUBPIXELS_TEST) {
         // Use subpixel mode
+        if (hpBarMode == SPEEDCHOICE_HEALTH_BARS_INSTANT) {
+            *pHpCalc = nowHp << 8;
+            return -1;
+        }
         if (nowHp == (*pHpCalc >> 8) && (*pHpCalc & 0xFF) == 0) {
             return -1;
         }
@@ -1530,7 +1532,7 @@ static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 delt
     return ret;
 }
 
-static u8 BattleHpBar_Util_MakeHpBarPixelBuffer(s32 maxHp, s32 hp, s32 deltaHp, s32 *pHpCalc, u8 *pixelBuf, u8 tilesWide) {
+static u8 BattleHpBar_Util_MakeHpBarPixelBuffer(s32 maxHp, s32 hp, s32 deltaHp, s32 *pHpCalc, u8 *pixelBuf, u8 tilesWide, int hpBarMode) {
     int i;
     int targetHp;
     u32 pixelsWide;

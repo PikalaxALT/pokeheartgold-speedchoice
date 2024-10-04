@@ -249,3 +249,4 @@
 .public ov12_02266508
 .public ov12_02266644
 .public ov12_0226BEF0
+.extern BattleSystem_Speedchoice_Init

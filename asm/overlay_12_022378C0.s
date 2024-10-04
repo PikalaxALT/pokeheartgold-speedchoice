@@ -4265,7 +4265,7 @@ ov12_0223A088: ; 0x0223A088
 	thumb_func_start ov12_0223A0D4
 ov12_0223A0D4: ; 0x0223A0D4
 	push {r3, r4, r5, lr}
-	ldr r1, _0223A20C ; =0x00002490
+	ldr r1, _0223A20C ; =0x00002490 // sizeof(BattleSystem)
 	add r5, r0, #0
 	mov r2, #5
 	bl OverlayManager_CreateAndGetData
@@ -4273,13 +4273,22 @@ ov12_0223A0D4: ; 0x0223A0D4
 	add r0, r5, #0
 	bl OverlayManager_GetArgs
 	add r5, r0, #0
-	ldr r2, _0223A20C ; =0x00002490
+	ldr r2, _0223A20C ; =0x00002490 // sizeof(BattleSystem)
 	mov r0, #0
 	add r1, r4, #0
 	bl MIi_CpuClearFast
 	add r0, r4, #0
 	add r1, r5, #0
 	bl ov12_02238A68
+
+	// Speedchoice change
+
+	add r0, r4, #0
+	add r1, r5, #0
+	bl BattleSystem_Speedchoice_Init
+
+	// Speedchoice change end
+
 	ldr r0, [r4, #0x2c]
 	mov r1, #4
 	tst r1, r0

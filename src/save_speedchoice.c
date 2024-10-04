@@ -34,6 +34,7 @@ void Save_Speedchoice_Init(SaveSpeedchoice *ssc) {
     Speedchoice_SetAttr(ssc, SPEEDCHOICE_HOLD_TO_MASH, SPEEDCHOICE_HOLD_TO_MASH_YES);
     Speedchoice_SetAttr(ssc, SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON);
     Speedchoice_SetAttr(ssc, SPEEDCHOICE_RUNNING_SHOES, SPEEDCHOICE_RUNNING_SHOES_FROM_START);
+    Speedchoice_SetAttr(ssc, SPEEDCHOICE_HEALTH_BARS, SPEEDCHOICE_HEALTH_BARS_INSTANT);
 }
 
 SaveSpeedchoice *Save_Speedchoice_Get(SaveData *saveData) {

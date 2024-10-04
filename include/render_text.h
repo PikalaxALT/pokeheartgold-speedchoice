@@ -53,6 +53,6 @@ void TextFlags_EndAutoScroll(void);
 // Speedchoice change
 void TextFlags_SetHoldToMash(BOOL holdToMash);
 BOOL TextPrinter_IsInstantText(TextPrinter *printer);
-BOOL TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag);
+void TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag);
 
 #endif // POKEHEARTGOLD_RENDER_TEXT_H

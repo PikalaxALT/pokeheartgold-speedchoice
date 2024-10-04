@@ -613,7 +613,7 @@ BOOL TextPrinter_IsInstantText(TextPrinter *printer) {
     return substruct->isInstantText;
 }
 
-BOOL TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag) {
+void TextPrinter_SetInstantText(TextPrinter *printer, BOOL flag) {
     TextPrinterSubStruct *substruct = (TextPrinterSubStruct *)printer->subStructFields;
     substruct->isInstantText        = flag;
 }

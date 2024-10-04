@@ -148,4 +148,7 @@ u8 BattleSystem_PrintTrainerMessage(BattleSystem *bsys, int trainerId, int battl
 u32 BattleSystem_PrintBattleMessage(BattleSystem *bsys, MsgData *data, BattleMessage *msg, u8 delay);
 u32 ov12_0223C4E8(BattleSystem *bsys, Window *window, MsgData *data, BattleMessage *msg, int x, int y, int flag, int width, int delay);
 
+// Speedchoice change
+void BattleSystem_Speedchoice_Init(BattleSystem *bsys, BattleSetup *setup);
+
 #endif
