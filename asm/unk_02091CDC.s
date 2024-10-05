@@ -386,7 +386,7 @@ _02091FEE: ; jump table
 _02091FFC:
 	add r1, r5, #0
 	mov r2, #1
-	mov r3, #4
+	add r3, r5, #0
 	bl sub_020920E0
 	cmp r0, #1
 	bne _020920CC
@@ -424,7 +424,7 @@ _02092040:
 _02092046:
 	mov r1, #1
 	add r2, r1, #0
-	mov r3, #4
+	add r3, r5, #0
 	bl sub_020920E0
 	cmp r0, #1
 	bne _020920CC

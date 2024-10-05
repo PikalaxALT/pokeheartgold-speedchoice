@@ -263,7 +263,7 @@ BOOL ChooseStarter_Init(OVY_MANAGER *ovy, int *state_p) {
     for (i = 0; i < 3; i++) {
         work->choices[i] = &args->starters[i];
     }
-    work->textSpeed = Options_GetTextSpeed(args->options) == TEXT_SPEED_OPT_INSTANT ? TEXT_SPEED_OPT_INSTANT : TEXT_SPEED_FAST;
+    work->textSpeed = Options_GetTextFrameDelay(args->options) == TEXT_SPEED_OPT_INSTANT ? TEXT_SPEED_OPT_INSTANT : TEXT_SPEED_FAST;
     Main_SetVBlankIntrCB((GFIntrCB)vBlankCB, work);
     HBlankInterruptDisable();
     setGxBanks();

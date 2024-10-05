@@ -49,7 +49,7 @@ typedef enum StartMenuAction {
     START_MENU_ACTION_TRAINER_CARD,
     START_MENU_ACTION_SAVE,
     START_MENU_ACTION_OPTIONS,
-    START_MENU_ACTION_RUNNING_SHOES,
+    START_MENU_ACTION_6,
     START_MENU_ACTION_7,
     START_MENU_ACTION_RETIRE,
     START_MENU_ACTION_9,
@@ -65,7 +65,7 @@ typedef enum StartMenuActionDisable {
     START_MENU_ACTION_DISABLE_TRAINER_CARD,
     START_MENU_ACTION_DISABLE_SAVE,
     START_MENU_ACTION_DISABLE_OPTIONS,
-    START_MENU_ACTION_DISABLE_RUNNING_SHOES,
+    START_MENU_ACTION_DISABLE_6,
     START_MENU_ACTION_DISABLE_7,
     START_MENU_ACTION_DISABLE_RETIRE,
     START_MENU_ACTION_DISABLE_POKEGEAR,
@@ -194,19 +194,19 @@ static const int sActionToIconIndex[] = {
 };
 
 static const StartMenuActionFunc sStartMenuActions[] = {
-    [START_MENU_ACTION_POKEDEX]       = {.ident = msg_0196_00000,  .func = Task_StartMenu_HandleSelection_Pokedex             },
-    [START_MENU_ACTION_POKEMON]       = { .ident = msg_0196_00001, .func = Task_StartMenu_HandleSelection_Pokemon             },
-    [START_MENU_ACTION_BAG]           = { .ident = msg_0196_00002, .func = Task_StartMenu_HandleSelection_Bag                 },
-    [START_MENU_ACTION_TRAINER_CARD]  = { .ident = msg_0196_00003, .func = Task_StartMenu_HandleSelection_TrainerCard         },
-    [START_MENU_ACTION_SAVE]          = { .ident = msg_0196_00004, .func = Task_StartMenu_HandleSelection_Save                },
-    [START_MENU_ACTION_OPTIONS]       = { .ident = msg_0196_00005, .func = Task_StartMenu_HandleSelection_Options             },
-    [START_MENU_ACTION_RUNNING_SHOES] = { .ident = msg_0196_00006, .func = STARTMENUTASKFUNC_CANCEL                           },
-    [START_MENU_ACTION_7]             = { .ident = msg_0196_00007, .func = Task_StartMenu_HandleSelection_RemovedEasyChatThing},
-    [START_MENU_ACTION_RETIRE]        = { .ident = msg_0196_00008, .func = Task_StartMenu_HandleSelection_Retire              },
-    [START_MENU_ACTION_9]             = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
-    [START_MENU_ACTION_10]            = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
-    [START_MENU_ACTION_POKEGEAR]      = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
-    [START_MENU_ACTION_12]            = { .ident = msg_0196_00014, .func = sub_0203D2CC                                       },
+    [START_MENU_ACTION_POKEDEX]      = {.ident = msg_0196_00000,  .func = Task_StartMenu_HandleSelection_Pokedex             },
+    [START_MENU_ACTION_POKEMON]      = { .ident = msg_0196_00001, .func = Task_StartMenu_HandleSelection_Pokemon             },
+    [START_MENU_ACTION_BAG]          = { .ident = msg_0196_00002, .func = Task_StartMenu_HandleSelection_Bag                 },
+    [START_MENU_ACTION_TRAINER_CARD] = { .ident = msg_0196_00003, .func = Task_StartMenu_HandleSelection_TrainerCard         },
+    [START_MENU_ACTION_SAVE]         = { .ident = msg_0196_00004, .func = Task_StartMenu_HandleSelection_Save                },
+    [START_MENU_ACTION_OPTIONS]      = { .ident = msg_0196_00005, .func = Task_StartMenu_HandleSelection_Options             },
+    [START_MENU_ACTION_6]            = { .ident = msg_0196_00006, .func = STARTMENUTASKFUNC_CANCEL                           },
+    [START_MENU_ACTION_7]            = { .ident = msg_0196_00007, .func = Task_StartMenu_HandleSelection_RemovedEasyChatThing},
+    [START_MENU_ACTION_RETIRE]       = { .ident = msg_0196_00008, .func = Task_StartMenu_HandleSelection_Retire              },
+    [START_MENU_ACTION_9]            = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
+    [START_MENU_ACTION_10]           = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
+    [START_MENU_ACTION_POKEGEAR]     = { .ident = msg_0196_00014, .func = Task_StartMenu_HandleSelection_Pokegear            },
+    [START_MENU_ACTION_12]           = { .ident = msg_0196_00014, .func = sub_0203D2CC                                       },
 };
 
 static const u8 _020FA0AC[] = {
@@ -534,8 +534,8 @@ static u32 StartMenu_BuildActionLists(StartMenuTaskData *startMenu, u8 *insertio
     if (!(startMenu->inhibitIconFlags & (1 << START_MENU_ACTION_DISABLE_OPTIONS))) {
         StartMenuButton_Insert(insertionOrderDest, displayOrderDest, &numIcons, START_MENU_ACTION_OPTIONS, -1u);
     }
-    if (!(startMenu->inhibitIconFlags & (1 << START_MENU_ACTION_DISABLE_RUNNING_SHOES))) {
-        StartMenuButton_Insert(insertionOrderDest, displayOrderDest, &numIcons, START_MENU_ACTION_RUNNING_SHOES, -1u);
+    if (!(startMenu->inhibitIconFlags & (1 << START_MENU_ACTION_DISABLE_6))) {
+        StartMenuButton_Insert(insertionOrderDest, displayOrderDest, &numIcons, START_MENU_ACTION_6, -1u);
     }
     StartMenuButton_Insert(insertionOrderDest, displayOrderDest, &numIcons, START_MENU_ACTION_9, 7);
     StartMenuButton_Insert(insertionOrderDest, displayOrderDest, &numIcons, START_MENU_ACTION_10, 8);
