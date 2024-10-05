@@ -11,3 +11,11 @@ BOOL ScrCmd_GetSpeedchoiceAttr(ScriptContext *ctx) {
     *dest                = Speedchoice_GetAttr(ssc, attr);
     return FALSE;
 }
+
+BOOL ScrCmd_CompareSpeedchoiceAttr(ScriptContext *ctx) {
+    int attr              = ScriptReadByte(ctx);
+    int val               = ScriptReadByte(ctx);
+    SaveSpeedchoice *ssc  = Save_Speedchoice_Get(FieldSystem_GetSaveData(ctx->fieldSystem));
+    ctx->comparisonResult = ScrCmd_Util_Compare(Speedchoice_GetAttr(ssc, attr), val);
+    return FALSE;
+}

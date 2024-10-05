@@ -853,6 +853,7 @@ BOOL ScrCmd_BufferSealNamePlural(ScriptContext *ctx);
 BOOL ScrCmd_Capitalize(ScriptContext *ctx);
 BOOL ScrCmd_BufferDeptStoreFloorNo(ScriptContext *ctx);
 BOOL ScrCmd_GetSpeedchoiceAttr(ScriptContext *ctx);
+BOOL ScrCmd_CompareSpeedchoiceAttr(ScriptContext *ctx);
 
 const ScrCmdFunc gScriptCmdTable[] = {
     ScrCmd_Nop,
@@ -1709,6 +1710,7 @@ const ScrCmdFunc gScriptCmdTable[] = {
     ScrCmd_Capitalize,
     ScrCmd_BufferDeptStoreFloorNo,
     ScrCmd_GetSpeedchoiceAttr,
+    ScrCmd_CompareSpeedchoiceAttr,
 };
 const u32 sNumScriptCmds = NELEMS(gScriptCmdTable);
 

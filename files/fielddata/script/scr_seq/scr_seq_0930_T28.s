@@ -18,8 +18,7 @@
 
 scr_seq_T28_005:
 	// Speedchoice change
-	get_speedchoice_attr SPEEDCHOICE_ROCKETLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, 1
+	compare_speedchoice_attr SPEEDCHOICE_ROCKETLESS, 1
 	goto_if_eq .rocketless
 	setvar VAR_SCENE_ROCKET_TAKEOVER, 2
 	setflag FLAG_UNK_0C5

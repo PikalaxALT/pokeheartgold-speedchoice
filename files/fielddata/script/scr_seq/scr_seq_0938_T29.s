@@ -338,8 +338,7 @@ scr_seq_T29_003:
 	buffer_players_name 0
 
 	// Speedchoice change: Rocketless
-	get_speedchoice_attr SPEEDCHOICE_ROCKETLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, 1
+	compare_speedchoice_attr SPEEDCHOICE_ROCKETLESS, 1
 	goto_if_eq .rocketless
 
 	gender_msgbox msg_0626_T29_00003, msg_0626_T29_00004

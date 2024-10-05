@@ -112,8 +112,7 @@ _014C:
 scr_seq_R34_003:
 	scrcmd_609
 	lockall
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless
 	gender_msgbox msg_0384_R34_00036, msg_0384_R34_00041
 	closemsg

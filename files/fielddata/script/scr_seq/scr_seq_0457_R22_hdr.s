@@ -12,7 +12,7 @@
 	.byte 0
 
 scr_seq_R22_map_scripts_2:
-	.short VAR_UNK_40FE, 1, _EV_scr_seq_R22_003 + 1
+	.short VAR_SCENE_CELEBI_EVENT, 1, _EV_scr_seq_R22_003 + 1
 	.short 0
 
 	.balign 4, 0

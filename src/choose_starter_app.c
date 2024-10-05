@@ -263,7 +263,7 @@ BOOL ChooseStarter_Init(OVY_MANAGER *ovy, int *state_p) {
     for (i = 0; i < 3; i++) {
         work->choices[i] = &args->starters[i];
     }
-    work->textSpeed = 1;
+    work->textSpeed = Options_GetTextSpeed(args->options) == TEXT_SPEED_OPT_INSTANT ? TEXT_SPEED_OPT_INSTANT : TEXT_SPEED_FAST;
     Main_SetVBlankIntrCB((GFIntrCB)vBlankCB, work);
     HBlankInterruptDisable();
     setGxBanks();
@@ -370,7 +370,7 @@ BOOL ChooseStarter_Main(OVY_MANAGER *ovy, int *state) {
             work->modelAnimState = MODEL_ANM_STATE_BALL_ROCK;
             {
                 String *baseTrans = NULL;
-                printMsgOnWinEx(work->winTop, work->heapId, FALSE, NARC_msg_msg_0190_bin, msg_0190_00004 + work->curSelection, MAKE_TEXT_COLOR(1, 2, 15), 0, &baseTrans);
+                printMsgOnWinEx(work->winTop, work->heapId, FALSE, NARC_msg_msg_0190_bin, msg_0190_00004 + work->curSelection, MAKE_TEXT_COLOR(1, 2, 15), TEXT_SPEED_INSTANT, &baseTrans);
                 String_Delete(baseTrans);
             }
             PlayCry(sSpecies[work->curSelection], FALSE);
@@ -424,7 +424,7 @@ BOOL ChooseStarter_Main(OVY_MANAGER *ovy, int *state) {
         work->modelAnimState = MODEL_ANM_STATE_BALL_ROCK;
         {
             String *sp10 = NULL;
-            printMsgOnWinEx(work->winTop, work->heapId, FALSE, NARC_msg_msg_0190_bin, msg_0190_00004 + work->curSelection, MAKE_TEXT_COLOR(1, 2, 15), 0, &sp10);
+            printMsgOnWinEx(work->winTop, work->heapId, FALSE, NARC_msg_msg_0190_bin, msg_0190_00004 + work->curSelection, MAKE_TEXT_COLOR(1, 2, 15), TEXT_SPEED_INSTANT, &sp10);
             String_Delete(sp10);
         }
         PlayCry(sSpecies[work->curSelection], 0);
@@ -1059,7 +1059,7 @@ static u8 printMsgOnWinEx(Window *window, HeapID heapId, BOOL makeFrame, s32 msg
 
 static void printMsgOnBottom(struct ChooseStarterAppWork *work, int msgId) {
     String *string = NULL;
-    printMsgOnWinEx(work->winBottom, work->heapId, FALSE, NARC_msg_msg_0190_bin, msgId, MAKE_TEXT_COLOR(1, 2, 0), 0, &string);
+    printMsgOnWinEx(work->winBottom, work->heapId, FALSE, NARC_msg_msg_0190_bin, msgId, MAKE_TEXT_COLOR(1, 2, 0), TEXT_SPEED_INSTANT, &string);
     String_Delete(string);
 }
 

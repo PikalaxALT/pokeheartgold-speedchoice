@@ -210,8 +210,7 @@ scr_seq_T20R0101_012:
 	wait_button_or_walk_away
 	closemsg
 	setvar VAR_SCENE_ELMS_LAB, 1
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_no_set_scene
 	setvar VAR_SCENE_NEW_BARK_TOWN_OW, 1
 	goto .done_friendless
@@ -682,8 +681,7 @@ scr_seq_T20R0101_002:
 	apply_movement obj_T20R0101_policeman, _0A7C
 	wait_movement
 	npc_msg msg_0543_T20R0101_00023
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless
 	closemsg
 	clearflag FLAG_HIDE_ELMS_LAB_FRIEND
@@ -727,8 +725,7 @@ _0904:
 	closemsg
 	npc_msg msg_0543_T20R0101_00028
 	closemsg
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_2
 	apply_movement obj_T20R0101_var_1, _0AEC
 .friendless_2:
@@ -737,8 +734,7 @@ _0904:
 	play_se SEQ_SE_DP_KAIDAN2
 	hide_person obj_T20R0101_policeman
 	wait_se SEQ_SE_DP_KAIDAN2
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_3
 	apply_movement obj_T20R0101_var_1, _0B08
 	wait_movement
@@ -783,8 +779,7 @@ _0904:
 	setflag FLAG_HIDE_ROUTE_30_BATTLERS
 	clearflag FLAG_HIDE_ROUTE_30_YOUNGSTER_JOEY
 	setvar VAR_SCENE_ELMS_LAB, 4
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_7
 	setvar VAR_SCENE_ROUTE_29, 1
 	clearflag FLAG_HIDE_ROUTE_29_FRIEND
@@ -916,8 +911,7 @@ _0B64:
 scr_seq_T20R0101_014:
 	scrcmd_609
 	lockall
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_4
 	apply_movement obj_T20R0101_var_1, _0C78
 	wait_movement
@@ -931,8 +925,7 @@ scr_seq_T20R0101_014:
 	wait_following_pokemon_movement
 	following_pokemon_movement 55
 	apply_movement obj_player, _0CA4
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_5
 	apply_movement obj_T20R0101_var_1, _0C90
 .friendless_5:
@@ -960,8 +953,7 @@ _0BF3:
 	buffer_players_name 0
 	gender_msgbox msg_0543_T20R0101_00064, msg_0543_T20R0101_00065
 	closemsg
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_6
 	apply_movement obj_T20R0101_var_1, _0CAC
 	apply_movement obj_player, _0CB8

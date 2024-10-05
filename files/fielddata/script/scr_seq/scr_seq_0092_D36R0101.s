@@ -99,7 +99,7 @@ _0145:
 scr_seq_D36R0101_021:
 	compare VAR_UNK_412B, 1
 	call_if_eq _016F
-	compare VAR_UNK_40FE, 4
+	compare VAR_SCENE_CELEBI_EVENT, 4
 	call_if_eq _0189
 	end
 
@@ -1745,7 +1745,7 @@ _17B7:
 	goto _1816
 
 _17C1:
-	compare VAR_UNK_40FE, 4
+	compare VAR_SCENE_CELEBI_EVENT, 4
 	goto_if_ge _1803
 	goto_if_unset FLAG_BEAT_RADIO_TOWER_ROCKETS, _1803
 	get_party_lead_alive VAR_TEMP_x4006
@@ -2353,6 +2353,8 @@ _1F48:
 	apply_movement obj_partner_poke, _2038
 	wait_movement
 	fade_out_bgm 0, 30
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	callstd std_play_friend_music
 	touchscreen_menu_hide
 	clearflag FLAG_HIDE_ILEX_FOREST_FRIEND
@@ -2367,6 +2369,7 @@ _1F48:
 	gender_msgbox msg_0115_D36R0101_00057, msg_0115_D36R0101_00056
 	closemsg
 	callstd std_fade_end_friend_music
+.friendless:
 	play_se SEQ_SE_GS_SUZUSYUTUGEN_HO
 	fade_screen 6, 6, 0, RGB_WHITE
 	wait_fade
@@ -2374,16 +2377,22 @@ _1F48:
 	fade_screen 6, 6, 1, RGB_WHITE
 	wait_fade
 	apply_movement obj_player, _2014
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_2
 	apply_movement obj_D36R0101_var_1, _208C
 	wait_movement
 	gender_msgbox msg_0115_D36R0101_00059, msg_0115_D36R0101_00058
+.friendless_2:
 	closemsg
 	play_se SEQ_SE_GS_TIMESLIP
 	scrcmd_810
-	setvar VAR_UNK_40FE, 1
+	setvar VAR_SCENE_CELEBI_EVENT, 1
 	clearflag FLAG_HIDE_ROUTE_22_GIOVANNI_RIVAL
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_3
 	clearflag FLAG_HIDE_ROUTE_22_FRIEND
 	setflag FLAG_HIDE_ILEX_FOREST_FRIEND
+.friendless_3:
 	warp MAP_R22, 0, 954, 280, DIR_SOUTH
 	fade_screen 6, 15, 1, RGB_WHITE
 	wait_fade
@@ -2451,6 +2460,8 @@ scr_seq_D36R0101_022:
 	toggle_following_pokemon_movement 0
 	wait_following_pokemon_movement
 	following_pokemon_movement 55
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_4
 	apply_movement obj_D36R0101_var_1, _2148
 	apply_movement obj_player, _21F4
 	wait_movement
@@ -2481,7 +2492,8 @@ scr_seq_D36R0101_022:
 	wait_movement
 	callstd std_fade_end_friend_music
 	touchscreen_menu_show
-	setvar VAR_UNK_40FE, 5
+.friendless_4:
+	setvar VAR_SCENE_CELEBI_EVENT, 5
 	hide_person obj_D36R0101_var_1
 	hide_person obj_D36R0101_tsure_poke_static_marill
 	setflag FLAG_HIDE_ILEX_FOREST_FRIEND

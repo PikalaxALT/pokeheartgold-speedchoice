@@ -889,8 +889,11 @@ BOOL ScrCmd_BufferSealNamePlural(ScriptContext *ctx);
 BOOL ScrCmd_Capitalize(ScriptContext *ctx);
 BOOL ScrCmd_BufferDeptStoreFloorNo(ScriptContext *ctx);
 
+u8 ScrCmd_Util_Compare(u32 a, u32 b);
+
 // Speedchoice
 BOOL ScrCmd_GetSpeedchoiceAttr(ScriptContext *ctx);
+BOOL ScrCmd_CompareSpeedchoiceAttr(ScriptContext *ctx);
 
 MessageFormat *sub_0204B538(SaveData *saveData, u16 numEligblePokemon, u16 a2, u8 a3, u8 *numLegendaryPokemonSeen);
 void ov01_021EF564(ScriptContext *ctx, u16 messageBank, u16 messageNum, u16 word1, s16 word2, u8 canABSpeedUp);

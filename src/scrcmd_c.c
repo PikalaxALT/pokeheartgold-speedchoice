@@ -247,7 +247,7 @@ BOOL ScrCmd_CopyByte(ScriptContext *ctx) {
     return FALSE;
 }
 
-static u8 Compare(u32 a, u32 b) {
+u8 ScrCmd_Util_Compare(u32 a, u32 b) {
     if (a < b) {
         return SCRIPT_COMPARISON_RESULT_LESS;
     } else if (a == b) {
@@ -261,7 +261,7 @@ BOOL ScrCmd_CompareLocalToLocal(ScriptContext *ctx) {
     u8 a = ctx->data[ScriptReadByte(ctx)];
     u8 b = ctx->data[ScriptReadByte(ctx)];
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -270,7 +270,7 @@ BOOL ScrCmd_CompareLocalToValue(ScriptContext *ctx) {
     u8 a = ctx->data[ScriptReadByte(ctx)];
     u8 b = ScriptReadByte(ctx);
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -279,7 +279,7 @@ BOOL ScrCmd_CompareLocalToAddr(ScriptContext *ctx) {
     u8 a = ctx->data[ScriptReadByte(ctx)];
     u8 b = *(u8 *)ScriptReadWord(ctx);
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -288,7 +288,7 @@ BOOL ScrCmd_CompareAddrToLocal(ScriptContext *ctx) {
     u8 a = *(u8 *)ScriptReadWord(ctx);
     u8 b = ctx->data[ScriptReadByte(ctx)];
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -297,7 +297,7 @@ BOOL ScrCmd_CompareAddrToValue(ScriptContext *ctx) {
     u8 a = *(u8 *)ScriptReadWord(ctx);
     u8 b = ScriptReadByte(ctx);
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -306,7 +306,7 @@ BOOL ScrCmd_CompareAddrToAddr(ScriptContext *ctx) {
     u8 a = *(u8 *)ScriptReadWord(ctx);
     u8 b = *(u8 *)ScriptReadWord(ctx);
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -315,7 +315,7 @@ BOOL ScrCmd_CompareVarToValue(ScriptContext *ctx) {
     u16 a = *ScriptGetVarPointer(ctx);
     u16 b = ScriptReadHalfword(ctx);
 
-    ctx->comparisonResult = Compare(a, b);
+    ctx->comparisonResult = ScrCmd_Util_Compare(a, b);
 
     return FALSE;
 }
@@ -324,7 +324,7 @@ BOOL ScrCmd_CompareVarToVar(ScriptContext *ctx) {
     u16 *a_ptr = ScriptGetVarPointer(ctx);
     u16 *b_ptr = ScriptGetVarPointer(ctx);
 
-    ctx->comparisonResult = Compare(*a_ptr, *b_ptr);
+    ctx->comparisonResult = ScrCmd_Util_Compare(*a_ptr, *b_ptr);
 
     return FALSE;
 }

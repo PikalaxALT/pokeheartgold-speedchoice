@@ -4764,6 +4764,12 @@
 	.short \dest
 	.endm
 
+	.macro compare_speedchoice_attr attr, val
+	.short 854
+	.byte \attr
+	.byte \val
+	.endm
+
 	; Script headers
 
 	.macro map_script kind, script

@@ -94,7 +94,10 @@ _0126:
 	goto_if_no_item_space ITEM_TM51, 1, _015E
 	callstd std_give_item_verbose
 	setflag FLAG_GOT_TM51_FROM_FALKNER
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	clearflag FLAG_HIDE_NEW_BARK_FRIENDS_ROOM_FRIEND
+.friendless:
 	npc_msg msg_0558_T22GYM0101_00004
 	wait_button_or_walk_away
 	closemsg

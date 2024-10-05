@@ -18,7 +18,7 @@ scr_seq_R22_001:
 	end
 
 _0027:
-	compare VAR_UNK_40FE, 1
+	compare VAR_SCENE_CELEBI_EVENT, 1
 	goto_if_eq _005E
 	get_weekday VAR_TEMP_x4000
 	compare VAR_TEMP_x4000, 4
@@ -37,14 +37,17 @@ _005E:
 	end
 
 scr_seq_R22_004:
-	compare VAR_UNK_40FE, 1
+	compare VAR_SCENE_CELEBI_EVENT, 1
 	goto_if_eq _0073
 	end
 
 _0073:
 	move_person_facing obj_R22_sakaki, 947, 1, 266, DIR_WEST
 	move_person_facing obj_R22_gsrivel, 950, 1, 266, DIR_WEST
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless
 	move_person_facing obj_R22_var_1, 952, 1, 280, DIR_EAST
+.friendless:
 	end
 
 scr_seq_R22_003:
@@ -55,6 +58,8 @@ scr_seq_R22_003:
 	following_pokemon_movement 55
 	apply_movement obj_player, _037C
 	wait_movement
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_2
 	apply_movement obj_R22_var_1, _02CC
 	wait_movement
 	gender_msgbox msg_0360_R22_00012, msg_0360_R22_00011
@@ -81,6 +86,7 @@ scr_seq_R22_003:
 	apply_movement obj_player, _03A0
 	apply_movement obj_R22_var_1, _0310
 	wait_movement
+.friendless_2:
 	wait_following_pokemon_movement
 	toggle_following_pokemon_movement 1
 	following_pokemon_movement 48
@@ -120,9 +126,12 @@ scr_seq_R22_003:
 	wait_movement
 	apply_movement obj_R22_gsrivel, _03F4
 	wait_movement
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_3
 	buffer_rivals_name 0
 	npc_msg msg_0360_R22_00005
 	closemsg
+.friendless_3:
 	apply_movement obj_R22_gsrivel, _03F4
 	wait_movement
 	npc_msg msg_0360_R22_00006
@@ -141,7 +150,10 @@ scr_seq_R22_003:
 	apply_movement obj_R22_gsrivel, _0420
 	play_se SEQ_SE_DP_WALL_HIT2
 	apply_movement obj_player, _03B0
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_4
 	apply_movement obj_R22_var_1, _03D0
+.friendless_4:
 	wait_movement
 	apply_movement obj_R22_gsrivel, _042C
 	apply_movement obj_player, _03D0
@@ -153,8 +165,11 @@ scr_seq_R22_003:
 	hide_person obj_R22_gsrivel
 	setflag FLAG_HIDE_ROUTE_22_GIOVANNI_RIVAL
 	callstd std_fade_end_rival_intro_music
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_5
 	gender_msgbox msg_0360_R22_00022, msg_0360_R22_00021
 	closemsg
+.friendless_5:
 	fade_out_bgm 20, 30
 	apply_movement obj_partner_poke, _0350
 	wait_movement
@@ -165,15 +180,25 @@ scr_seq_R22_003:
 	fade_screen 6, 6, 1, RGB_WHITE
 	wait_fade
 	apply_movement obj_player, _03C4
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_6
 	apply_movement obj_R22_var_1, _0320
 	wait_movement
 	gender_msgbox msg_0360_R22_00024, msg_0360_R22_00023
 	closemsg
+	goto .after_friendless_6
+
+.friendless_6:
+	wait_movement
+.after_friendless_6:
 	play_se SEQ_SE_GS_TIMESLIP
 	scrcmd_810
-	setvar VAR_UNK_40FE, 2
+	setvar VAR_SCENE_CELEBI_EVENT, 2
 	clearflag FLAG_HIDE_TOHJO_FALLS_GIOVANNI
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_7
 	clearflag FLAG_HIDE_TOHJO_FALLS_FRIEND
+.friendless_7:
 	warp MAP_D45R0102, 0, 6, 8, DIR_SOUTH
 	fade_screen 6, 15, 1, RGB_WHITE
 	wait_fade

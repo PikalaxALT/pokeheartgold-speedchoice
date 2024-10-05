@@ -266,7 +266,7 @@
 #define VAR_SCENE_SINJOH_MYSTRI_ROOM       0x40FB
 #define VAR_UNK_40FC                       0x40FC
 #define VAR_UNK_40FD                       0x40FD
-#define VAR_UNK_40FE                       0x40FE
+#define VAR_SCENE_CELEBI_EVENT                       0x40FE
 #define VAR_UNK_40FF                       0x40FF
 #define VAR_UNK_4100                       0x4100
 #define VAR_UNK_4101                       0x4101

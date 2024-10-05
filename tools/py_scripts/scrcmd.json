@@ -5340,6 +5340,13 @@
         1,
         "var"
       ]
+    },
+    {
+      "name": "compare_speedchoice_attr",
+      "args": [
+        1,
+        1
+      ]
     }
   ],
   "argtypes": {

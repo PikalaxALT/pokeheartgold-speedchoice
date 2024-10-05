@@ -15,24 +15,28 @@ scr_seq_D45R0102_002:
 	end
 
 scr_seq_D45R0102_000:
-	compare VAR_UNK_40FE, 4
+	compare VAR_SCENE_CELEBI_EVENT, 4
 	goto_if_eq _0077
-	compare VAR_UNK_40FE, 3
+	compare VAR_SCENE_CELEBI_EVENT, 3
 	goto_if_eq _0057
-	compare VAR_UNK_40FE, 2
+	compare VAR_SCENE_CELEBI_EVENT, 2
 	goto_if_eq _003D
 	end
 
 _003D:
 	move_person_facing obj_D45R0102_sakaki, 6, 1, 4, DIR_NORTH
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq _0077
 	move_person_facing obj_D45R0102_var_1, 5, 1, 8, DIR_SOUTH
 	end
 
 _0057:
 	move_person_facing obj_D45R0102_sakaki, 6, 1, 6, DIR_SOUTH
-	move_person_facing obj_D45R0102_var_1, 5, 1, 7, DIR_NORTH
 	make_object_visible obj_partner_poke
 	scrcmd_606
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq _0077
+	move_person_facing obj_D45R0102_var_1, 5, 1, 7, DIR_NORTH
 	end
 
 _0077:
@@ -45,7 +49,10 @@ scr_seq_D45R0102_001:
 	wait_following_pokemon_movement
 	following_pokemon_movement 55
 	apply_movement obj_player, _0374
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_2
 	apply_movement obj_D45R0102_var_1, _03AC
+.friendless_2:
 	wait_movement
 	apply_movement obj_partner_poke, _0398
 	wait_movement
@@ -56,14 +63,19 @@ scr_seq_D45R0102_001:
 	wait_movement
 	npc_msg msg_0131_D45R0102_00000
 	closemsg
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_3
 	apply_movement obj_D45R0102_var_1, _03AC
 	wait_movement
 	gender_msgbox msg_0131_D45R0102_00008, msg_0131_D45R0102_00007
 	closemsg
+.friendless_3:
 	apply_movement obj_D45R0102_sakaki, _032C
 	wait_movement
 	npc_msg msg_0131_D45R0102_00001
 	closemsg
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_4
 	apply_movement obj_D45R0102_var_1, _03B4
 	wait_movement
 	gender_msgbox msg_0131_D45R0102_00010, msg_0131_D45R0102_00009
@@ -77,6 +89,7 @@ scr_seq_D45R0102_001:
 	buffer_players_name 0
 	gender_msgbox msg_0131_D45R0102_00014, msg_0131_D45R0102_00013
 	closemsg
+.friendless_4:
 	stop_bgm 0
 	play_se SEQ_SE_PL_FR03
 	play_bgm SEQ_GS_SENKYO
@@ -87,12 +100,12 @@ scr_seq_D45R0102_001:
 	wait_movement
 	npc_msg msg_0131_D45R0102_00003
 	closemsg
-	setvar VAR_UNK_40FE, 3
+	setvar VAR_SCENE_CELEBI_EVENT, 3
 	trainer_battle TRAINER_ROCKET_BOSS_GIOVANNI, 0, 1, 0
 	check_battle_won VAR_SPECIAL_RESULT
 	compare VAR_SPECIAL_RESULT, 0
 	goto_if_eq _0250
-	setvar VAR_UNK_40FE, 4
+	setvar VAR_SCENE_CELEBI_EVENT, 4
 	apply_movement obj_D45R0102_sakaki, _033C
 	wait_movement
 	npc_msg msg_0131_D45R0102_00004
@@ -102,7 +115,10 @@ scr_seq_D45R0102_001:
 	hide_person obj_D45R0102_sakaki
 	setflag FLAG_HIDE_TOHJO_FALLS_GIOVANNI
 	apply_movement obj_player, _0380
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_5
 	apply_movement obj_D45R0102_var_1, _0380
+.friendless_5:
 	wait_movement
 	fade_out_bgm 0, 30
 	stop_bgm 0
@@ -110,14 +126,17 @@ scr_seq_D45R0102_001:
 	npc_msg msg_0131_D45R0102_00005
 	stop_se SEQ_SE_PL_FR03
 	closemsg
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_6
 	apply_movement obj_D45R0102_var_1, _03D4
 	wait_movement
 	buffer_players_name 0
 	gender_msgbox msg_0131_D45R0102_00016, msg_0131_D45R0102_00015
 	closemsg
+.friendless_6:
 	get_party_lead_alive VAR_TEMP_x4002
 	get_partymon_species VAR_TEMP_x4002, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, 251
+	compare VAR_SPECIAL_RESULT, SPECIES_CELEBI
 	call_if_ne _02C0
 	apply_movement obj_partner_poke, _03A4
 	wait_movement
@@ -129,6 +148,8 @@ scr_seq_D45R0102_001:
 	wait_fade
 	apply_movement obj_player, _038C
 	wait_movement
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq _022A
 	apply_movement obj_D45R0102_var_1, _03C0
 	wait_movement
 	compare VAR_TEMP_x4003, 1
@@ -168,7 +189,7 @@ _0250:
 	play_se SEQ_SE_GS_TIMESLIP
 	scrcmd_810
 	setflag FLAG_UNK_178
-	setvar VAR_UNK_40FE, 0
+	setvar VAR_SCENE_CELEBI_EVENT, 0
 	setflag FLAG_HIDE_ILEX_FOREST_FRIEND
 	warp MAP_D36R0101, 0, 16, 57, DIR_SOUTH
 	fade_screen 6, 15, 1, RGB_WHITE
@@ -178,6 +199,8 @@ _0250:
 	end
 
 _02C0:
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
+	goto_if_eq .friendless_7
 	setvar VAR_TEMP_x4003, 1
 	apply_movement obj_D45R0102_var_1, _0304
 	wait_movement
@@ -185,6 +208,7 @@ _02C0:
 	closemsg
 	gender_msgbox msg_0131_D45R0102_00025, msg_0131_D45R0102_00024
 	closemsg
+.friendless_7:
 	fade_screen 6, 1, 0, RGB_BLACK
 	wait_fade
 	play_fanfare SEQ_ME_ASA
@@ -307,7 +331,7 @@ scr_seq_D45R0102_003:
 	play_se SEQ_SE_DP_SELECT
 	lockall
 	faceplayer
-	compare VAR_UNK_40FE, 4
+	compare VAR_SCENE_CELEBI_EVENT, 4
 	goto_if_ge _0404
 	npc_msg msg_0131_D45R0102_00020
 	wait_button_or_walk_away

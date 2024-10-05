@@ -53,8 +53,7 @@ scr_seq_T20_009:
 	end
 
 _00A4:
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless
 	clearflag FLAG_HIDE_NEW_BARK_FRIEND
 	show_person obj_T20_var_1
@@ -1070,8 +1069,7 @@ _0D70:
 scr_seq_T20_003:
 	scrcmd_609
 	lockall
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_2
 	release obj_T20_tsure_poke_static_marill
 	apply_movement obj_T20_tsure_poke_static_marill, _0E08
@@ -1193,8 +1191,7 @@ scr_seq_T20_007:
 scr_seq_T20_008:
 	scrcmd_609
 	lockall
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_3
 	callstd std_play_friend_music
 	apply_movement obj_T20_var_1, _0F84
@@ -1681,8 +1678,7 @@ _1508:
 scr_seq_T20_012:
 	scrcmd_609
 	lockall
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_4
 	apply_movement obj_T20_var_1_2, _1644
 	wait_movement
@@ -1830,8 +1826,7 @@ scr_seq_T20_004:
 	end
 
 scr_seq_T20_005:
-	get_speedchoice_attr SPEEDCHOICE_FRIENDLESS, VAR_SPECIAL_RESULT
-	compare VAR_SPECIAL_RESULT, SPEEDCHOICE_FRIENDLESS_ON
+	compare_speedchoice_attr SPEEDCHOICE_FRIENDLESS, SPEEDCHOICE_FRIENDLESS_ON
 	goto_if_eq .friendless_5
 	play_se SEQ_SE_DP_SELECT
 	lockall
