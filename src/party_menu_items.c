@@ -14,6 +14,7 @@
 #include "party_menu_list_items.h"
 #include "party_menu_sprites.h"
 #include "pokemon_mood.h"
+#include "save_speedchoice.h"
 #include "system.h"
 #include "text.h"
 #include "unk_02005D10.h"
@@ -468,12 +469,47 @@ static int PartyMenu_ItemUseFunc_HPRestore(PartyMenu *partyMenu) {
     return PARTY_MENU_STATE_ITEM_USE_CB;
 }
 
+static inline void restoreHpStep(PartyMenuMonsDrawState *mds, int hp, SaveData *saveData) {
+    SaveSpeedchoice *ssc = Save_Speedchoice_Get(saveData);
+    switch (Speedchoice_GetAttr(ssc, SPEEDCHOICE_HEALTH_BARS)) {
+    case SPEEDCHOICE_HEALTH_BARS_VANILLA:
+        ++mds->hp;
+        break;
+    case SPEEDCHOICE_HEALTH_BARS_FAST: {
+        if (mds->maxHp < 48) {
+            ++mds->hp;
+        } else {
+            u32 curHp      = (mds->hp << 8) + mds->hpRestoreSubPixels;
+            u32 maxHp      = mds->maxHp << 8;
+            u32 targetHp   = hp << 8;
+            u32 hpPerPixel = maxHp / 48;
+            curHp += hpPerPixel;
+            if (curHp > targetHp) {
+                curHp = targetHp;
+            }
+            mds->hp                 = curHp >> 8;
+            mds->hpRestoreSubPixels = (s8)(curHp & 0xFF);
+            if (mds->hpRestoreSubPixels < 0) {
+                ++mds->hp;
+                if (mds->hp == hp) {
+                    mds->hpRestoreSubPixels = 0;
+                }
+            }
+        }
+        break;
+    }
+    case SPEEDCHOICE_HEALTH_BARS_INSTANT:
+        mds->hp = hp;
+        break;
+    }
+}
+
 static int PartyMenu_ItemUseFunc_HPRestoreAnimLoop(PartyMenu *partyMenu) {
     int hp = GetMonData(Party_GetMonByIndex(partyMenu->args->party, partyMenu->partyMonIndex), MON_DATA_HP, NULL);
     // Hook: Speed up HP restore here
     // This currently animates 1 HP per frame
     if (hp != partyMenu->monsDrawState[partyMenu->partyMonIndex].hp) {
-        ++partyMenu->monsDrawState[partyMenu->partyMonIndex].hp;
+        restoreHpStep(&partyMenu->monsDrawState[partyMenu->partyMonIndex], hp, partyMenu->args->fieldSystem->saveData);
     }
     PartyMenu_ClearMonHpTextWindow(partyMenu, partyMenu->partyMonIndex);
     FillWindowPixelBuffer(&partyMenu->windows[PARTY_MENU_WINDOW_ID_MON1_HPBAR + partyMenu->partyMonIndex * 5], 0);
@@ -541,7 +577,7 @@ int PartyMenu_Subtask_SacredAsh(PartyMenu *partyMenu) {
     case 2:
         mon = Party_GetMonByIndex(partyMenu->args->party, partyMenu->partyMonIndex);
         hp  = GetMonData(mon, MON_DATA_HP, NULL);
-        ++partyMenu->monsDrawState[partyMenu->partyMonIndex].hp;
+        restoreHpStep(&partyMenu->monsDrawState[partyMenu->partyMonIndex], hp, partyMenu->args->fieldSystem->saveData);
         PartyMenu_ClearMonHpTextWindow(partyMenu, partyMenu->partyMonIndex);
         FillWindowPixelBuffer(&partyMenu->windows[PARTY_MENU_WINDOW_ID_MON1_HPBAR + 5 * partyMenu->partyMonIndex], 0);
         PartyMenu_PrintMonCurHpOnWindow(partyMenu, partyMenu->partyMonIndex);

@@ -374,7 +374,7 @@ typedef struct PartyMenuMonsDrawState {
     s16 statusIconY;              // 844
     s16 heldItemX;                // 846
     s16 heldItemY;                // 848
-    u8 filler_22[2];              // alignment padding
+    s8 hpRestoreSubPixels;        // 84A
     Sprite *iconSprite;           // 84C
     Sprite *mainScreenIconSprite; // 850
     u8 unk_2C;                    // 854

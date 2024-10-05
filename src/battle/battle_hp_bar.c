@@ -21,7 +21,7 @@ typedef enum HPBarType {
     HP_BAR_TYPE_PALPARK,
 } HPBarType;
 
-#define USE_SUBPIXELS_TEST (hpBarMode == SPEEDCHOICE_HEALTH_BARS_VANILLA ? maxHp < pixelsWide : TRUE)
+#define USE_SUBPIXELS_TEST (hpBarMode == SPEEDCHOICE_HEALTH_BARS_VANILLA ? maxHp < pixelsWide : maxHp > pixelsWide)
 
 ALIGN(4)
 static const s8 sHpBarArrowXOffsets[] = {
@@ -159,12 +159,12 @@ static const UnkStruct_ov12_0226D408 ov12_0226D450[][2] = {
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D3F0[] = {
-    {0xD80,  0x60},
-    { 0x6A0, 0x60},
-    { 0xC80, 0x60},
-    { 0x6A0, 0x60},
-    { 0xC80, 0x60},
-    { 0x6A0, 0x60},
+    { 0xD80, 0x60 },
+    { 0x6A0, 0x60 },
+    { 0xC80, 0x60 },
+    { 0x6A0, 0x60 },
+    { 0xC80, 0x60 },
+    { 0x6A0, 0x60 },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D480[][2] = {
@@ -195,62 +195,62 @@ static const UnkStruct_ov12_0226D408 ov12_0226D480[][2] = {
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D3C0[] = {
-    {0x460,  0x20},
-    { 0x420, 0x20},
-    { 0x440, 0x20},
-    { 0x420, 0x20},
-    { 0x440, 0x20},
-    { 0x420, 0x20},
+    { 0x460, 0x20 },
+    { 0x420, 0x20 },
+    { 0x440, 0x20 },
+    { 0x420, 0x20 },
+    { 0x440, 0x20 },
+    { 0x420, 0x20 },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D390[] = {
-    {0x480,  0x60},
-    { 0x440, 0x60},
-    { 0x460, 0x60},
-    { 0x440, 0x60},
-    { 0x460, 0x60},
-    { 0x440, 0x60},
+    { 0x480, 0x60 },
+    { 0x440, 0x60 },
+    { 0x460, 0x60 },
+    { 0x440, 0x60 },
+    { 0x460, 0x60 },
+    { 0x440, 0x60 },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D370[] = {
-    {0x240,  0xC0},
-    { 0x340, 0xC0},
-    { 0xA00, 0xE0},
-    { 0xB00, 0xE0},
+    { 0x240, 0xC0 },
+    { 0x340, 0xC0 },
+    { 0xA00, 0xE0 },
+    { 0xB00, 0xE0 },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D380[] = {
-    {0x440,  0xC0},
-    { 0x540, 0xC0},
-    { 0xC00, 0xE0},
-    { 0xD00, 0xE0},
+    { 0x440, 0xC0 },
+    { 0x540, 0xC0 },
+    { 0xC00, 0xE0 },
+    { 0xD00, 0xE0 },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D3A8[] = {
-    {0,      0   },
-    { 0,     0   },
-    { 0x4C0, 0x40},
-    { 0,     0   },
-    { 0x4C0, 0x40},
-    { 0,     0   },
+    { 0,     0    },
+    { 0,     0    },
+    { 0x4C0, 0x40 },
+    { 0,     0    },
+    { 0x4C0, 0x40 },
+    { 0,     0    },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D3D8[] = {
-    {0,      0   },
-    { 0,     0   },
-    { 0xCC0, 0x20},
-    { 0,     0   },
-    { 0xCC0, 0x20},
-    { 0,     0   },
+    { 0,     0    },
+    { 0,     0    },
+    { 0xCC0, 0x20 },
+    { 0,     0    },
+    { 0xCC0, 0x20 },
+    { 0,     0    },
 };
 
 static const UnkStruct_ov12_0226D408 ov12_0226D408[] = {
-    {0,      0   },
-    { 0,     0   },
-    { 0xC60, 0x20},
-    { 0,     0   },
-    { 0xC60, 0x20},
-    { 0,     0   },
+    { 0,     0    },
+    { 0,     0    },
+    { 0xC60, 0x20 },
+    { 0,     0    },
+    { 0xC60, 0x20 },
+    { 0,     0    },
 };
 
 static void ov12_02264824(SpriteRenderer *renderer, SpriteGfxHandler *gfxHandler, NARC *narc, PaletteData *plttData, int barType);
@@ -1466,26 +1466,21 @@ static int BattleHpBar_CalculatePixelsChangeFrame(s32 maxHp, s32 curHp, s32 delt
     s32 hpPerPixel;
 
     pixelsWide = tilesWide * 8;
-    if (*pHpCalc == 0x80000000) {
-        // Initialize
-        if (USE_SUBPIXELS_TEST) {
-            *pHpCalc = curHp << 8;
-        } else {
-            *pHpCalc = curHp;
-        }
-    }
-    nowHp = curHp - deltaHp;
+    nowHp      = curHp - deltaHp;
     if (nowHp < 0) {
         nowHp = 0;
     } else if (nowHp > maxHp) {
         nowHp = maxHp;
     }
+    if (hpBarMode == SPEEDCHOICE_HEALTH_BARS_INSTANT) {
+        curHp = nowHp;
+    }
+    if (*pHpCalc == 0x80000000) {
+        // Initialize
+        *pHpCalc = USE_SUBPIXELS_TEST ? curHp << 8 : curHp;
+    }
     if (USE_SUBPIXELS_TEST) {
         // Use subpixel mode
-        if (hpBarMode == SPEEDCHOICE_HEALTH_BARS_INSTANT) {
-            *pHpCalc = nowHp << 8;
-            return -1;
-        }
         if (nowHp == (*pHpCalc >> 8) && (*pHpCalc & 0xFF) == 0) {
             return -1;
         }
