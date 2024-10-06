@@ -4,6 +4,8 @@
 
 #include "pm_string.h"
 
+// strvar syntax: {FFFE controlCode numFields field [field ...]}
+
 const u16 *MsgArray_SkipControlCode(const u16 *arr) {
     GF_ASSERT(*arr == EXT_CTRL_CODE_BEGIN);
     if (*arr == EXT_CTRL_CODE_BEGIN) {

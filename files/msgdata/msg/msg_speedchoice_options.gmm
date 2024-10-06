@@ -284,6 +284,10 @@
         <attribute name="window_context_name">used</attribute>
         <language name="English">Player’s Name</language>
     </row>
+    <row id="msg_speedchoice_options_name_placeholder">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">{STRVAR_1 3, 0, 0}</language>
+    </row>
     <row id="msg_speedchoice_options_name_desc">
         <attribute name="window_context_name">used</attribute>
         <language name="English">Enter your name</language>
@@ -371,5 +375,17 @@
     <row id="msg_speedchoice_options_running_shoes_desc">
         <attribute name="window_context_name">used</attribute>
         <language name="English">Whether to have the running shoes\nenabled from the beginning</language>
+    </row>
+    <row id="msg_speedchoice_options_player_name_not_set">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">NOT SET</language>
+    </row>
+    <row id="msg_speedchoice_options_confirm">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">CONFIRM</language>
+    </row>
+    <row id="msg_speedchoice_options_confirm_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Are these settings okay?\nCV: {STRVAR_1 3, 1, 0}\n</language>
     </row>
 </body>

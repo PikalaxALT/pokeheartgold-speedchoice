@@ -38,5 +38,6 @@ void String_RadioAddStatic(String *string, u8 level);
 u16 *String_cstr(String *str);
 void String_Cat(String *dest, String *src);
 BOOL String_IsTrainerName(String *string);
+String *ConvertAsciiToPmString(const char *asciiStr, HeapID heapId);
 
 #endif // POKEHEARTGOLD_STRING_H

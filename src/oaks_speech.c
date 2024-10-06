@@ -2039,7 +2039,7 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
         OakSpeech_SelectedGenderIndicatorSpritesAction(data, data->playerGender);
         // Vestige of gendered grammar in Japanese
         // Both messages are the same in English
-        if (data->playerGender == 0) {
+        if (data->playerGender == PLAYER_GENDER_MALE) {
             data->queuedMsgId = msg_0219_00041;
         } else {
             data->queuedMsgId = msg_0219_00042;

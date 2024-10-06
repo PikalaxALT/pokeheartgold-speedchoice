@@ -11,6 +11,7 @@
 #include "save_data_read_error.h"
 #include "sound.h"
 #include "sound_02004A44.h"
+#include "speedchoice_cv.h"
 #include "sys_task.h"
 #include "system.h"
 #include "timer_3.h"
@@ -51,6 +52,7 @@ void NitroMain(void) {
     InitSystemForTheGame();
     InitGraphicMemory();
     InitKeypadAndTouchpad();
+    Speedchoice_EnsureCV();
     sub_0201A4B0(0);
     PM_GetBackLight(&gBacklightTop, NULL);
     Init3DBufferSwapRequestState();

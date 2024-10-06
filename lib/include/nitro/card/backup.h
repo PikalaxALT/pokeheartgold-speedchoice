@@ -1,6 +1,10 @@
 #ifndef NITRO_CARD_BACKUP_BACKUP_H_
 #define NITRO_CARD_BACKUP_BACKUP_H_
 
+#include <nitro/card/common.h>
+#include <nitro/mi.h>
+#include <nitro/types.h>
+
 BOOL CARD_TryWaitBackupAsync(void);
 void CARD_CancelBackupAsync(void);
 
@@ -44,4 +48,4 @@ static inline BOOL CARD_WriteAndVerifyBackup(u32 dst, const void *src, u32 len) 
     return CARDi_WriteAndVerifyBackup(dst, src, len, NULL, NULL, FALSE);
 }
 
-#endif //NITRO_CARD_BACKUP_BACKUP_H_
+#endif // NITRO_CARD_BACKUP_BACKUP_H_
