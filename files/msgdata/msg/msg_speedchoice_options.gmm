@@ -386,6 +386,18 @@
     </row>
     <row id="msg_speedchoice_options_confirm_desc">
         <attribute name="window_context_name">used</attribute>
-        <language name="English">Are these settings okay?\nCV: {STRVAR_1 3, 1, 0}\n</language>
+        <language name="English">Are these settings okay?\nCV: {STRVAR_1 3, 1, 0}{YESNO}</language>
+    </row>
+    <row id="msg_speedchoice_options_page">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Page</language>
+    </row>
+    <row id="msg_speedchoice_options_page_desc">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English"></language>
+    </row>
+    <row id="msg_speedchoice_options_no_name_error">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Excuse me! You didn't tell me your name!\nPlease choose a name.</language>
     </row>
 </body>

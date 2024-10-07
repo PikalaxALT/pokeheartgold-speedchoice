@@ -2,6 +2,7 @@
 
 #include "global.h"
 
+#include "msgdata/msg.naix"
 #include "msgdata/msg/msg_speedchoice_options.h"
 
 #include "bg_window.h"
@@ -58,12 +59,13 @@ typedef enum SpeedchoiceOptionsMainState {
 
 typedef struct SpeedchoiceOptions_AppData {
     HeapID heapId;
-    SaveSpeedchoice *speedchoice;
+    SpeedchoiceOptions_Args *args;
     BgConfig *bgConfig;
     Window windows[15];
     NARC *narc;
     u8 pageNo;
     u8 cursorPos;
+    s8 selectChangeDir;
     u8 cursorSelections[SPEEDCHOICE_SETTINGS_MAX + 3];
     MsgData *msgData;
     MessageFormat *msgFormat;
@@ -76,6 +78,7 @@ typedef struct SpeedchoiceOptions_AppData {
     YesNoPrompt *yesno;
     NamingScreenArgs *namingScreenArgs;
     OVY_MANAGER *namingScreenApp;
+    SpeedchoiceOptionsMainState stateOnReturn;
 } SpeedchoiceOptions_AppData;
 
 typedef struct SpeedchoiceOptionLine {
@@ -97,6 +100,7 @@ static SpeedchoiceOptionsInputResponse SpeedchoiceOptions_HandleInput(Speedchoic
 static BOOL SpeedchoiceOptions_TurnPage(SpeedchoiceOptions_AppData *data, int direction);
 static BOOL SpeedchoiceOptions_ChangeOption(SpeedchoiceOptions_AppData *data, int direction);
 static BOOL SpeedchoiceOptions_MoveCursor(SpeedchoiceOptions_AppData *data, int direction);
+static BOOL SpeedchoiceOptions_MoveCursorEx(SpeedchoiceOptions_AppData *data, int newCursorPos);
 static void SpeedchoiceOptions_MoveCursorSprite(SpeedchoiceOptions_AppData *data);
 static BOOL SpeedchoiceOptions_CallApp(SpeedchoiceOptions_AppData *data);
 static void SpeedchoiceOptions_DrawPage(SpeedchoiceOptions_AppData *data, int pageNo, GFBgLayer layer);
@@ -110,6 +114,8 @@ static void SpeedchoiceOptions_PrintOptionDesc(SpeedchoiceOptions_AppData *data,
 static void SpeedchoiceOptions_PrintConfirm(SpeedchoiceOptions_AppData *data);
 static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data);
 static void SpeedchoiceOptions_BufferCV(SpeedchoiceOptions_AppData *data);
+static void SpeedchoiceOptions_DrawConfirmScreen(SpeedchoiceOptions_AppData *data);
+static YesNoResponse SpeedchoiceOptions_HandleYesNo(SpeedchoiceOptions_AppData *data);
 
 const OVY_MGR_TEMPLATE gOverlayTemplate_SpeedchoiceOptions = {
     SpeedchoiceOptions_Init,
@@ -522,6 +528,15 @@ static const WindowTemplate sWindowTemplates[] = {
      15,
      365,
      },
+    {
+     GF_BG_LYR_SUB_1,
+     0,
+     18,
+     32,
+     6,
+     15,
+     1,
+     },
 };
 
 static const TouchscreenHitbox sButtonHitboxes[] = {
@@ -582,10 +597,13 @@ BOOL SpeedchoiceOptions_Init(OVY_MANAGER *mgr, int *pState) {
     SpeedchoiceOptions_AppData *data = OverlayManager_CreateAndGetData(mgr, sizeof(SpeedchoiceOptions_AppData), HEAP_ID_OPTIONS_APP);
     memset(data, 0, sizeof(SpeedchoiceOptions_AppData));
     data->heapId           = HEAP_ID_OPTIONS_APP;
-    data->speedchoice      = args->speedchoice;
+    data->args             = args;
     data->namingScreenApp  = NULL;
     data->namingScreenArgs = NamingScreen_CreateArgs(HEAP_ID_OAKS_SPEECH, NAME_SCREEN_PLAYER, 0, PLAYER_NAME_LENGTH, args->options, NULL);
     SpeedchoiceOptions_LoadSelections(data);
+    SpeedchoiceOptions_SetupBgConfig(data);
+    data->msgFormat = MessageFormat_New(data->heapId);
+    data->msgData   = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, NARC_msgdata_msg, NARC_msg_msg_speedchoice_options_bin, data->heapId);
     return TRUE;
 }
 
@@ -595,31 +613,96 @@ BOOL SpeedchoiceOptions_Main(OVY_MANAGER *mgr, int *pState) {
 
     switch (myState) {
     case SPC_OPT_MAIN_STATE_FADE_IN:
+        SpeedchoiceOptions_DrawPage(data, data->pageNo, GF_BG_LYR_MAIN_1);
+        BeginNormalPaletteFade(0, 1, 1, RGB_BLACK, 6, 1, data->heapId);
+        myState             = SPC_OPT_MAIN_STATE_WAIT_FADE_IN;
+        data->stateOnReturn = SPC_OPT_MAIN_STATE_INPUT_LOOP;
         break;
     case SPC_OPT_MAIN_STATE_WAIT_FADE_IN:
         if (IsPaletteFadeFinished()) {
-            myState = SPC_OPT_MAIN_STATE_INPUT_LOOP;
+            myState = data->stateOnReturn;
         }
         break;
     case SPC_OPT_MAIN_STATE_INPUT_LOOP:
+        switch (SpeedchoiceOptions_HandleInput(data)) {
+        case SPEEDCHOICE_INPUT_CALL_APP:
+            myState             = SPC_OPT_MAIN_STATE_FADE_OUT_TO_NAMING;
+            data->stateOnReturn = SPC_OPT_MAIN_STATE_INPUT_LOOP;
+            break;
+        case SPEEDCHOICE_INPUT_CURSOR_LEFT:
+            myState               = data->cursorPos == LINES_PER_PAGE ? SPC_OPT_MAIN_STATE_PAGE_CHANGE : SPC_OPT_MAIN_STATE_OPT_SELECT;
+            data->selectChangeDir = -1;
+            break;
+        case SPEEDCHOICE_INPUT_CURSOR_RIGHT:
+            myState               = data->cursorPos == LINES_PER_PAGE ? SPC_OPT_MAIN_STATE_PAGE_CHANGE : SPC_OPT_MAIN_STATE_OPT_SELECT;
+            data->selectChangeDir = 1;
+            break;
+        case SPEEDCHOICE_INPUT_CURSOR_UP:
+            myState               = SPC_OPT_MAIN_STATE_CURSOR_MOVE;
+            data->selectChangeDir = -1;
+            break;
+        case SPEEDCHOICE_INPUT_CURSOR_DOWN:
+            myState               = SPC_OPT_MAIN_STATE_CURSOR_MOVE;
+            data->selectChangeDir = 1;
+            break;
+        case SPEEDCHOICE_INPUT_CONFIRM:
+            if (String_GetLength(data->namingScreenArgs->nameInputString) == 0) {
+                myState             = SPC_OPT_MAIN_STATE_FADE_OUT_TO_NAMING;
+                data->stateOnReturn = SPC_OPT_MAIN_STATE_CONFIRM_WAIT_YESNO;
+            } else {
+                myState = SPC_OPT_MAIN_STATE_CONFIRM;
+            }
+            break;
+        case SPEEDCHOICE_INPUT_CURSOR_TO_CONFIRM:
+            SpeedchoiceOptions_MoveCursorEx(data, LINES_PER_PAGE + 1);
+            break;
+        }
         break;
     case SPC_OPT_MAIN_STATE_PAGE_CHANGE:
+        SpeedchoiceOptions_TurnPage(data, data->selectChangeDir);
+        myState = SPC_OPT_MAIN_STATE_INPUT_LOOP;
         break;
     case SPC_OPT_MAIN_STATE_CURSOR_MOVE:
+        SpeedchoiceOptions_MoveCursor(data, data->selectChangeDir);
+        myState = SPC_OPT_MAIN_STATE_INPUT_LOOP;
         break;
     case SPC_OPT_MAIN_STATE_OPT_SELECT:
+        SpeedchoiceOptions_ChangeOption(data, data->selectChangeDir);
+        myState = SPC_OPT_MAIN_STATE_INPUT_LOOP;
         break;
     case SPC_OPT_MAIN_STATE_FADE_OUT_TO_NAMING:
-        break;
-    case SPC_OPT_MAIN_STATE_WAIT_FADE_OUT_TO_NAMING:
+        String_SetEmpty(data->namingScreenArgs->nameInputString);
+        data->namingScreenArgs->playerGender = data->cursorSelections[SPEEDCHOICE_PLAYER_MODEL];
+        data->namingScreenApp                = OverlayManager_New(&sOverlayTemplate_NamingScreen, data->namingScreenArgs, data->heapId);
+        myState                              = SPC_OPT_MAIN_STATE_FADE_IN_FROM_NAMING;
         break;
     case SPC_OPT_MAIN_STATE_FADE_IN_FROM_NAMING:
+        if (data->stateOnReturn == SPC_OPT_MAIN_STATE_CONFIRM_WAIT_YESNO) {
+            SpeedchoiceOptions_DrawConfirmScreen(data);
+        } else {
+            SpeedchoiceOptions_DrawPage(data, data->pageNo, GF_BG_LYR_MAIN_1);
+        }
+        BeginNormalPaletteFade(0, 1, 1, RGB_BLACK, 6, 1, data->heapId);
+        myState = SPC_OPT_MAIN_STATE_WAIT_FADE_IN;
         break;
     case SPC_OPT_MAIN_STATE_CONFIRM:
+        SpeedchoiceOptions_DrawConfirmScreen(data);
+        myState = SPC_OPT_MAIN_STATE_CONFIRM_WAIT_YESNO;
         break;
     case SPC_OPT_MAIN_STATE_CONFIRM_WAIT_YESNO:
+        switch (SpeedchoiceOptions_HandleYesNo(data)) {
+        case YESNORESPONSE_YES:
+            myState = SPC_OPT_MAIN_STATE_FADE_OUT_CONFIRM;
+            break;
+        case YESNORESPONSE_NO:
+            SpeedchoiceOptions_DrawPage(data, data->pageNo, GF_BG_LYR_MAIN_1);
+            myState = SPC_OPT_MAIN_STATE_INPUT_LOOP;
+            break;
+        }
         break;
     case SPC_OPT_MAIN_STATE_FADE_OUT_CONFIRM:
+        BeginNormalPaletteFade(4, 0, 0, RGB_BLACK, 6, 1, data->heapId);
+        myState = SPC_OPT_MAIN_STATE_WAIT_FADE_OUT_CONFIRM;
         break;
     case SPC_OPT_MAIN_STATE_WAIT_FADE_OUT_CONFIRM:
         if (IsPaletteFadeFinished()) {
@@ -638,6 +721,10 @@ BOOL SpeedchoiceOptions_Main(OVY_MANAGER *mgr, int *pState) {
 BOOL SpeedchoiceOptions_Exit(OVY_MANAGER *mgr, int *pState) {
     SpeedchoiceOptions_AppData *data = OverlayManager_GetData(mgr);
     SpeedchoiceOptions_SaveSelections(data);
+    SpeedchoiceOptions_FreeBgConfig(data);
+    DestroyMsgData(data->msgData);
+    MessageFormat_Delete(data->msgFormat);
+    NamingScreen_DeleteArgs(data->namingScreenArgs);
     OverlayManager_FreeData(mgr);
     DestroyHeap(HEAP_ID_OPTIONS_APP);
     return TRUE;
@@ -654,13 +741,19 @@ static void VBlankCB_SpeedchoiceOptionsApp(void *arg) {
 
 static void SpeedchoiceOptions_LoadSelections(SpeedchoiceOptions_AppData *data) {
     for (int i = 0; i < SPEEDCHOICE_SETTINGS_MAX; ++i) {
-        data->cursorSelections[i] = Speedchoice_GetAttr(data->speedchoice, i);
+        data->cursorSelections[i] = Speedchoice_GetAttr(data->args->speedchoice, i);
     }
+
+    const u16 *playerName = PlayerProfile_GetNamePtr(data->args->playerProfile);
+    CopyU16ArrayToStringN(data->namingScreenArgs->nameInputString, playerName, PLAYER_NAME_LENGTH + 1);
+    data->cursorSelections[SPEEDCHOICE_PLAYER_NAME]  = 0;
+    data->cursorSelections[SPEEDCHOICE_PLAYER_MODEL] = PlayerProfile_GetTrainerGender(data->args->playerProfile);
+    data->cursorSelections[SPEEDCHOICE_PRESET]       = SPEEDCHOICE_PRESET_VANILLA;
 }
 
 static void SpeedchoiceOptions_SaveSelections(SpeedchoiceOptions_AppData *data) {
     for (int i = 0; i < SPEEDCHOICE_SETTINGS_MAX; ++i) {
-        Speedchoice_SetAttr(data->speedchoice, i, data->cursorSelections[i]);
+        Speedchoice_SetAttr(data->args->speedchoice, i, data->cursorSelections[i]);
     }
 }
 
@@ -668,12 +761,42 @@ static SpeedchoiceOptionsInputResponse SpeedchoiceOptions_HandleInput(Speedchoic
     const SpeedchoiceOptionLine *page = &sOptions[data->pageNo];
     int optionNum                     = LINES_PER_PAGE * data->pageNo + data->cursorPos;
     if (gSystem.touchNew) {
-        return (SpeedchoiceOptionsInputResponse)TouchscreenHitbox_FindHitboxAtTouchNew(sButtonHitboxes);
+        int hitbox = TouchscreenHitbox_FindHitboxAtTouchNew(sButtonHitboxes);
+        switch (hitbox) {
+        case 0:
+        case 2:
+        case 4:
+        case 6:
+        case 8:
+        case 10:
+        case 12:
+            data->cursorPos = hitbox / 2;
+            return SPEEDCHOICE_INPUT_CURSOR_LEFT;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+        case 11:
+        case 13:
+            data->cursorPos = hitbox / 2;
+            return SPEEDCHOICE_INPUT_CURSOR_RIGHT;
+        case 14:
+            return SPEEDCHOICE_INPUT_CONFIRM;
+        case 15:
+            if (data->pageNo == 0) {
+                data->cursorPos = 1;
+                return SPEEDCHOICE_INPUT_CALL_APP;
+            }
+            break;
+        }
+        return SPEEDCHOICE_INPUT_NULL;
     }
     if (gSystem.newKeys & PAD_BUTTON_A) {
-        return SPEEDCHOICE_INPUT_CALL_APP;
-    }
-    if (gSystem.newKeys & PAD_BUTTON_START) {
+        if (data->pageNo == 0 && data->cursorPos == 1) {
+            return SPEEDCHOICE_INPUT_CALL_APP;
+        }
+    } else if (gSystem.newKeys & PAD_BUTTON_START) {
         return SPEEDCHOICE_INPUT_CURSOR_TO_CONFIRM;
     } else if (gSystem.newKeys & PAD_KEY_DOWN) {
         return SPEEDCHOICE_INPUT_CURSOR_DOWN;
@@ -719,8 +842,8 @@ static BOOL SpeedchoiceOptions_ChangeOption(SpeedchoiceOptions_AppData *data, in
     if (data->cursorPos >= LINES_PER_PAGE) {
         return FALSE;
     }
-    int optionNo = data->pageNo * LINES_PER_PAGE + data->cursorPos;
-    int oldChoice;
+    int optionNo  = data->pageNo * LINES_PER_PAGE + data->cursorPos;
+    int oldChoice = data->cursorSelections[sOptions[optionNo].attr_id];
     int newChoice = oldChoice + direction;
     if (newChoice < 0) {
         newChoice = sOptions[optionNo].num_options - 1;
@@ -744,6 +867,10 @@ static BOOL SpeedchoiceOptions_MoveCursor(SpeedchoiceOptions_AppData *data, int 
     } else if (newCursorPos >= LINES_PER_PAGE + 2) {
         newCursorPos = 0;
     }
+    return SpeedchoiceOptions_MoveCursorEx(data, newCursorPos);
+}
+
+static BOOL SpeedchoiceOptions_MoveCursorEx(SpeedchoiceOptions_AppData *data, int newCursorPos) {
     data->cursorPos = newCursorPos;
     PlaySE(SEQ_SE_DP_SELECT);
     SpeedchoiceOptions_MoveCursorSprite(data);
@@ -892,7 +1019,7 @@ static void SpeedchoiceOptions_PrintOptionEx(SpeedchoiceOptions_AppData *data, i
     int choice = data->cursorSelections[optionNo];
     GF_ASSERT(choice < sOptions[optionNo].num_options);
 
-    if (sOptions[optionNo].attr_id == SPEEDCHOICE_PLAYER_NAME) {
+    if (sOptions[optionNo].attr_id == SPEEDCHOICE_PLAYER_NAME && String_GetLength(data->namingScreenArgs->nameInputString) != 0) {
         ReadMsgDataIntoString(data->msgData, sOptions[optionNo].options_gmm[choice], data->strbuf_unformatted);
         BufferString(data->msgFormat, 0, data->namingScreenArgs->nameInputString, 0, 0, 0);
         StringExpandPlaceholders(data->msgFormat, data->strbuf_formatted, data->strbuf_unformatted);
@@ -939,7 +1066,7 @@ static void SpeedchoiceOptions_MoveCursorSprite(SpeedchoiceOptions_AppData *data
 static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data) {
     String *ret = String_New(2 * sizeof(SaveSpeedchoice) + 1, data->heapId);
     u32 cv[sizeof(SaveSpeedchoice) / 4];
-    u32 *ssc = (u32 *)data->speedchoice;
+    u32 *ssc = (u32 *)data->args->speedchoice;
     u32 *pCV = (u32 *)gRandoCV;
     u16 buf[2 * sizeof(SaveSpeedchoice) + 1];
     int i;
@@ -959,12 +1086,15 @@ static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data
 }
 
 static void SpeedchoiceOptions_BufferCV(SpeedchoiceOptions_AppData *data) {
-    ReadMsgDataIntoString(data->msgData, 0, data->strbuf_unformatted);
     String *cvString = SpeedchoiceOptions_GetCVasString(data);
     BufferString(data->msgFormat, 0, cvString, 0, 0, 0);
     String *speedchoiceVersion = ConvertAsciiToPmString(gSpeedchoiceVersion, data->heapId);
-
-    StringExpandPlaceholders(data->msgFormat, data->strbuf_formatted, data->strbuf_unformatted);
     String_Delete(cvString);
     String_Delete(speedchoiceVersion);
+}
+
+static void SpeedchoiceOptions_DrawConfirmScreen(SpeedchoiceOptions_AppData *data) {
+}
+
+static YesNoResponse SpeedchoiceOptions_HandleYesNo(SpeedchoiceOptions_AppData *data) {
 }
