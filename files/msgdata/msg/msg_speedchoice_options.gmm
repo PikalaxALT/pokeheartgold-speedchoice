@@ -308,9 +308,13 @@
         <attribute name="window_context_name">used</attribute>
         <language name="English">Choose your player’s appearance</language>
     </row>
-    <row id="msg_speedchoice_options_CV">
+    <row id="msg_speedchoice_options_CV_HG">
         <attribute name="window_context_name">used</attribute>
-        <language name="English">CV: {STRVAR_1 3, 0, 0}</language>
+        <language name="English">Pokémon HeartGold Speedchoice v{STRVAR_1 3, 0, 0}\nCV: {STRVAR_1 3, 1, 0}</language>
+    </row>
+    <row id="msg_speedchoice_options_CV_SS">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">Pokémon SoulSilver Speedchoice v{STRVAR_1 3, 0, 0}\nCV: {STRVAR_1 3, 1, 0}</language>
     </row>
     <row id="msg_speedchoice_options_prompt_okay">
         <attribute name="window_context_name">used</attribute>
@@ -398,6 +402,10 @@
     </row>
     <row id="msg_speedchoice_options_no_name_error">
         <attribute name="window_context_name">used</attribute>
-        <language name="English">Excuse me! You didn't tell me your name!\nPlease choose a name.</language>
+        <language name="English">Excuse me! You didn’t tell me your name!\nPlease choose a name.</language>
+    </row>
+    <row id="msg_speedchoice_options_confirm_screen_setting_ph">
+        <attribute name="window_context_name">used</attribute>
+        <language name="English">{STRVAR_1 3, 0, 0}: {STRVAR_1 3, 1, 0}</language>
     </row>
 </body>

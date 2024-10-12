@@ -62,6 +62,8 @@ typedef struct SpeedchoiceOptions_AppData {
     SpeedchoiceOptions_Args *args;
     BgConfig *bgConfig;
     Window windows[15];
+    Window confirmScreenWindow_Top;
+    Window confirmScreenWindow_Bottom;
     NARC *narc;
     u8 pageNo;
     u8 cursorPos;
@@ -113,7 +115,7 @@ static void SpeedchoiceOptions_PrintOptionName(SpeedchoiceOptions_AppData *data,
 static void SpeedchoiceOptions_PrintOptionDesc(SpeedchoiceOptions_AppData *data, int optionNo);
 static void SpeedchoiceOptions_PrintConfirm(SpeedchoiceOptions_AppData *data);
 static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data);
-static void SpeedchoiceOptions_BufferCV(SpeedchoiceOptions_AppData *data);
+static void SpeedchoiceOptions_PrintVersionAndCVString(SpeedchoiceOptions_AppData *data);
 static void SpeedchoiceOptions_DrawConfirmScreen(SpeedchoiceOptions_AppData *data);
 static YesNoResponse SpeedchoiceOptions_HandleYesNo(SpeedchoiceOptions_AppData *data);
 
@@ -173,6 +175,30 @@ static const u8 sPresets[][SPEEDCHOICE_SETTINGS_MAX] = {
                                     [SPEEDCHOICE_GOAL]             = SPEEDCHOICE_GOAL_MANUAL,
                                     [SPEEDCHOICE_RUNNING_SHOES]    = SPEEDCHOICE_RUNNING_SHOES_FROM_START,
                                     },
+};
+
+static const u8 sSpeedchoiceOptionsOrder[] = {
+    [SPEEDCHOICE_PRESET]           = 0,
+    [SPEEDCHOICE_PLAYER_NAME]      = 1,
+    [SPEEDCHOICE_PLAYER_MODEL]     = 2,
+    [SPEEDCHOICE_HOLD_TO_MASH]     = 3,
+    [SPEEDCHOICE_SPINNERS]         = 4,
+    [SPEEDCHOICE_ROCKETLESS]       = 5,
+    [SPEEDCHOICE_BETTER_MARTS]     = 6,
+    [SPEEDCHOICE_GOOD_EARLY_WILDS] = 7,
+    [SPEEDCHOICE_KIMONO_SEGMENTS]  = 8,
+    [SPEEDCHOICE_FRIENDLESS]       = 9,
+    [SPEEDCHOICE_EVIL_HAU]         = 10,
+    [SPEEDCHOICE_HEALTH_BARS]      = 11,
+    [SPEEDCHOICE_GOAL]             = 12,
+    [SPEEDCHOICE_EARLY_KANTO]      = 13,
+    [SPEEDCHOICE_EXP]              = 14,
+    [SPEEDCHOICE_BIKE_MUSIC]       = 15,
+    [SPEEDCHOICE_SURF_MUSIC]       = 16,
+    [SPEEDCHOICE_DEX_BEEPS]        = 17,
+    [SPEEDCHOICE_HMS]              = 18,
+    [SPEEDCHOICE_TRAINER_VISION]   = 19,
+    [SPEEDCHOICE_RUNNING_SHOES]    = 20,
 };
 
 static const SpeedchoiceOptionLine sOptions[] = {
@@ -537,6 +563,26 @@ static const WindowTemplate sWindowTemplates[] = {
      15,
      1,
      },
+};
+
+static const WindowTemplate sWindowTemplate_ConfirmScreen_Top = {
+    GF_BG_LYR_SUB_0,
+    0,
+    0,
+    32,
+    24,
+    15,
+    1,
+};
+
+static const WindowTemplate sWindowTemplate_ConfirmScreen_Bottom = {
+    GF_BG_LYR_MAIN_0,
+    0,
+    12,
+    32,
+    6,
+    15,
+    1,
 };
 
 static const TouchscreenHitbox sButtonHitboxes[] = {
@@ -1019,10 +1065,12 @@ static void SpeedchoiceOptions_PrintOptionEx(SpeedchoiceOptions_AppData *data, i
     int choice = data->cursorSelections[optionNo];
     GF_ASSERT(choice < sOptions[optionNo].num_options);
 
-    if (sOptions[optionNo].attr_id == SPEEDCHOICE_PLAYER_NAME && String_GetLength(data->namingScreenArgs->nameInputString) != 0) {
-        ReadMsgDataIntoString(data->msgData, sOptions[optionNo].options_gmm[choice], data->strbuf_unformatted);
-        BufferString(data->msgFormat, 0, data->namingScreenArgs->nameInputString, 0, 0, 0);
-        StringExpandPlaceholders(data->msgFormat, data->strbuf_formatted, data->strbuf_unformatted);
+    if (sOptions[optionNo].attr_id == SPEEDCHOICE_PLAYER_NAME) {
+        if (String_GetLength(data->namingScreenArgs->nameInputString) != 0) {
+            String_Copy(data->strbuf_formatted, data->namingScreenArgs->nameInputString);
+        } else {
+            ReadMsgDataIntoString(data->msgData, msg_speedchoice_options_player_name_not_set, data->strbuf_formatted);
+        }
     } else {
         ReadMsgDataIntoString(data->msgData, sOptions[optionNo].options_gmm[choice], data->strbuf_formatted);
     }
@@ -1065,6 +1113,8 @@ static void SpeedchoiceOptions_MoveCursorSprite(SpeedchoiceOptions_AppData *data
 
 static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data) {
     String *ret = String_New(2 * sizeof(SaveSpeedchoice) + 1, data->heapId);
+    GF_ASSERT(ret != NULL);
+
     u32 cv[sizeof(SaveSpeedchoice) / 4];
     u32 *ssc = (u32 *)data->args->speedchoice;
     u32 *pCV = (u32 *)gRandoCV;
@@ -1085,16 +1135,69 @@ static String *SpeedchoiceOptions_GetCVasString(SpeedchoiceOptions_AppData *data
     return ret;
 }
 
-static void SpeedchoiceOptions_BufferCV(SpeedchoiceOptions_AppData *data) {
+static const u8 sKeySettings[] = {
+    SPEEDCHOICE_PLAYER_NAME,
+    SPEEDCHOICE_ROCKETLESS,
+    SPEEDCHOICE_SPINNERS,
+    SPEEDCHOICE_TRAINER_VISION,
+    SPEEDCHOICE_HMS,
+    // SPEEDCHOICE_ENCOUNTER_SLOTS,
+    SPEEDCHOICE_EXP,
+    // SPEEDCHOICE_TIN_TOWER,
+    SPEEDCHOICE_BETTER_MARTS,
+    SPEEDCHOICE_GOOD_EARLY_WILDS,
+    SPEEDCHOICE_EARLY_KANTO,
+};
+
+static void SpeedchoiceOptions_PrintVersionAndCVString(SpeedchoiceOptions_AppData *data) {
     String *cvString = SpeedchoiceOptions_GetCVasString(data);
     BufferString(data->msgFormat, 0, cvString, 0, 0, 0);
     String *speedchoiceVersion = ConvertAsciiToPmString(gSpeedchoiceVersion, data->heapId);
+    BufferString(data->msgFormat, 1, speedchoiceVersion, 0, 0, 0);
+#if defined(HEARTGOLD)
+    ReadMsgDataIntoString(data->msgData, msg_speedchoice_options_CV_HG, data->strbuf_unformatted);
+#elif defined(SOULSILVER)
+    ReadMsgDataIntoString(data->msgData, msg_speedchoice_options_CV_SS, data->strbuf_unformatted);
+#else
+#error Invalid version
+#endif
+    StringExpandPlaceholders(data->msgFormat, data->strbuf_formatted, data->strbuf_unformatted);
+    AddTextPrinterParameterized(&data->confirmScreenWindow_Top, 0, data->strbuf_formatted, 8, 8 + 12 * NELEMS(sKeySettings), TEXT_SPEED_NOTRANSFER, NULL);
     String_Delete(cvString);
     String_Delete(speedchoiceVersion);
 }
 
+static void SpeedchoiceOptions_PrintKeySettings(SpeedchoiceOptions_AppData *data) {
+    String *string = String_New(64, HEAP_ID_OPTIONS_APP);
+
+    ReadMsgDataIntoString(data->msgData, msg_speedchoice_options_confirm_screen_setting_ph, data->strbuf_unformatted);
+    for (int i = 0; i < NELEMS(sKeySettings); ++i) {
+        int setting                       = sKeySettings[i];
+        const SpeedchoiceOptionLine *line = &sOptions[sSpeedchoiceOptionsOrder[setting]];
+        ReadMsgDataIntoString(data->msgData, line->name_gmm, string);
+        BufferString(data->msgFormat, 0, string, 0, 0, 0);
+        if (setting == SPEEDCHOICE_PLAYER_NAME) {
+            BufferString(data->msgFormat, 1, data->namingScreenArgs->nameInputString, 0, 0, 0);
+        } else {
+            ReadMsgDataIntoString(data->msgData, line->options_gmm[data->cursorSelections[setting]], string);
+            BufferString(data->msgFormat, 1, string, 0, 0, 0);
+        }
+        StringExpandPlaceholders(data->msgFormat, data->strbuf_formatted, data->strbuf_unformatted);
+        AddTextPrinterParameterized(&data->confirmScreenWindow_Top, 0, data->strbuf_formatted, 8, 8 + 12 * i, TEXT_SPEED_NOTRANSFER, NULL);
+    }
+
+    String_Delete(string);
+}
+
 static void SpeedchoiceOptions_DrawConfirmScreen(SpeedchoiceOptions_AppData *data) {
+    AddWindow(data->bgConfig, &data->confirmScreenWindow_Top, &sWindowTemplate_ConfirmScreen_Top);
+    AddWindow(data->bgConfig, &data->confirmScreenWindow_Bottom, &sWindowTemplate_ConfirmScreen_Bottom);
+    FillWindowPixelBuffer(&data->confirmScreenWindow_Top, 15);
+    FillWindowPixelBuffer(&data->confirmScreenWindow_Bottom, 15);
+    SpeedchoiceOptions_PrintVersionAndCVString(data);
+    SpeedchoiceOptions_PrintKeySettings(data);
 }
 
 static YesNoResponse SpeedchoiceOptions_HandleYesNo(SpeedchoiceOptions_AppData *data) {
+    return YesNoPrompt_HandleInput(data->yesno);
 }
