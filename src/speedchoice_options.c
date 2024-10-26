@@ -11,6 +11,7 @@
 #include "heap.h"
 #include "launch_application.h"
 #include "msgdata.h"
+#include "naming_screen.h"
 #include "save_speedchoice.h"
 #include "speedchoice_cv.h"
 #include "text.h"
@@ -18,7 +19,6 @@
 #include "unk_02005D10.h"
 #include "unk_0200CF18.h"
 #include "unk_0200FA24.h"
-#include "unk_02082908.h"
 #include "yes_no_prompt.h"
 
 #define min(a, b) ((a) <= (b) ? (a) : (b))
@@ -718,9 +718,9 @@ BOOL SpeedchoiceOptions_Main(OVY_MANAGER *mgr, int *pState) {
         break;
     case SPC_OPT_MAIN_STATE_FADE_OUT_TO_NAMING:
         String_SetEmpty(data->namingScreenArgs->nameInputString);
-        data->namingScreenArgs->playerGender = data->cursorSelections[SPEEDCHOICE_PLAYER_MODEL];
-        data->namingScreenApp                = OverlayManager_New(&sOverlayTemplate_NamingScreen, data->namingScreenArgs, data->heapId);
-        myState                              = SPC_OPT_MAIN_STATE_FADE_IN_FROM_NAMING;
+        data->namingScreenArgs->playerGenderOrMonSpecies = data->cursorSelections[SPEEDCHOICE_PLAYER_MODEL];
+        data->namingScreenApp                            = OverlayManager_New(&gOverlayTemplate_NamingScreen, data->namingScreenArgs, data->heapId);
+        myState                                          = SPC_OPT_MAIN_STATE_FADE_IN_FROM_NAMING;
         break;
     case SPC_OPT_MAIN_STATE_FADE_IN_FROM_NAMING:
         if (data->stateOnReturn == SPC_OPT_MAIN_STATE_CONFIRM_WAIT_YESNO) {
