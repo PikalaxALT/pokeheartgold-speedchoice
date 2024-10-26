@@ -1797,7 +1797,8 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
             if (Speedchoice_GetAttr(ssc, SPEEDCHOICE_RUNNING_SHOES) == SPEEDCHOICE_RUNNING_SHOES_FROM_START) {
                 LocalFieldData *localFieldData = Save_LocalFieldData_Get(data->saveData);
                 struct PlayerSaveData *sub     = LocalFieldData_GetPlayer(localFieldData);
-                PlayerSaveData_SetRunningShoesFlag(sub, TRUE);
+                sub->hasRunningShoes           = TRUE;
+                sub->runningShoesLock          = TRUE;
             }
             data->state       = OAK_SPEECH_MAIN_STATE_PRINT_TIME_OF_DAY_MSG;
             data->queuedMsgId = OakSpeech_GetTimeOfDayIntroMsg();
