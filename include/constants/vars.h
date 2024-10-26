@@ -154,7 +154,7 @@
 #define VAR_SCENE_ROUTE_29                 0x408B
 #define VAR_SCENE_ROUTE_30_OW              0x408C
 #define VAR_UNK_408D                       0x408D
-#define VAR_SCENE_DAYCARE_INTRO                       0x408E
+#define VAR_SCENE_DAYCARE_INTRO            0x408E
 #define VAR_UNK_408F                       0x408F
 #define VAR_UNK_4090                       0x4090
 #define VAR_UNK_4091                       0x4091
@@ -163,7 +163,7 @@
 #define VAR_NUM_MET_WEEKDAY_SIBLINGS       0x4094
 #define VAR_SCENE_ROUTE_30_PHONE_CALL      0x4095
 #define VAR_UNK_4096                       0x4096
-#define VAR_SCENE_SOFTSAND_GIRLS                       0x4097
+#define VAR_SCENE_SOFTSAND_GIRLS           0x4097
 #define VAR_UNK_4098                       0x4098
 #define VAR_FARFETCHD1_STICKS1             0x4099
 #define VAR_FARFETCHD2_STICKS1             0x409A
@@ -266,7 +266,7 @@
 #define VAR_SCENE_SINJOH_MYSTRI_ROOM       0x40FB
 #define VAR_UNK_40FC                       0x40FC
 #define VAR_UNK_40FD                       0x40FD
-#define VAR_SCENE_CELEBI_EVENT                       0x40FE
+#define VAR_SCENE_CELEBI_EVENT             0x40FE
 #define VAR_UNK_40FF                       0x40FF
 #define VAR_UNK_4100                       0x4100
 #define VAR_UNK_4101                       0x4101
@@ -318,7 +318,7 @@
 #define VAR_UNK_412F                       0x412F
 #define VAR_UNK_4130                       0x4130
 #define VAR_UNK_4131                       0x4131
-#define VAR_SCENE_ROUTE_31_GATE                       0x4132
+#define VAR_SCENE_ROUTE_31_GATE            0x4132
 #define VAR_UNK_4133                       0x4133
 #define VAR_MIDGAME_BADGES                 0x4134 // if this hits 4, a phone call triggers
 #define VAR_UNK_4135                       0x4135
